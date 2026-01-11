@@ -1,0 +1,14 @@
+[
+    {
+        "name": "Inferno Shooter",
+        "file": "inferno_shooter.html",
+        "type": "game",
+        "icon": "🔫"
+    },
+    {
+        "name": "AsterOS (недоделанная)",
+        "file": "asteros.html",
+        "type": "other",
+        "icon": "📱"
+    }
+]

@@ -1,0 +1,2489 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>AsterOS 1.0 Preview 1</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+
+        :root {
+            --primary: #a855f7;
+            --primary-light: #c084fc;
+            --primary-dark: #9333ea;
+            --primary-glow: rgba(168, 85, 247, 0.4);
+            --accent: #22d3ee;
+            
+            /* Dark theme (default) */
+            --bg-primary: #0a0510;
+            --bg-secondary: #12081a;
+            --bg-card: rgba(168, 85, 247, 0.08);
+            --bg-card-solid: #1a1025;
+            --bg-elevated: rgba(168, 85, 247, 0.12);
+            --border-color: rgba(168, 85, 247, 0.2);
+            --border-light: rgba(168, 85, 247, 0.1);
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --text-tertiary: rgba(255, 255, 255, 0.5);
+            --glass-bg: rgba(168, 85, 247, 0.1);
+            --glass-border: rgba(168, 85, 247, 0.2);
+            --overlay-bg: rgba(10, 5, 16, 0.95);
+        }
+
+        .light-theme {
+            --bg-primary: #f5f0fa;
+            --bg-secondary: #ffffff;
+            --bg-card: rgba(168, 85, 247, 0.08);
+            --bg-card-solid: #ffffff;
+            --bg-elevated: rgba(168, 85, 247, 0.1);
+            --border-color: rgba(168, 85, 247, 0.2);
+            --border-light: rgba(168, 85, 247, 0.1);
+            --text-primary: #1a1025;
+            --text-secondary: rgba(26, 16, 37, 0.7);
+            --text-tertiary: rgba(26, 16, 37, 0.5);
+            --glass-bg: rgba(255, 255, 255, 0.8);
+            --glass-border: rgba(168, 85, 247, 0.15);
+            --overlay-bg: rgba(245, 240, 250, 0.95);
+        }
+
+        .pure-dark-theme {
+            --bg-primary: #000000;
+            --bg-secondary: #0a0a0a;
+            --bg-card: rgba(255, 255, 255, 0.05);
+            --bg-card-solid: #121212;
+            --bg-elevated: rgba(255, 255, 255, 0.08);
+            --border-color: rgba(255, 255, 255, 0.1);
+            --border-light: rgba(255, 255, 255, 0.05);
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --text-tertiary: rgba(255, 255, 255, 0.5);
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --overlay-bg: rgba(0, 0, 0, 0.95);
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a1025 0%, #0f0a15 50%, #0a0510 100%);
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .phone-frame {
+            width: 300px;
+            height: 620px;
+            background: var(--bg-primary);
+            border-radius: 40px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 
+                0 0 0 2px #2a1a3a,
+                0 0 0 4px #1a1025,
+                0 25px 80px rgba(168, 85, 247, 0.15),
+                0 0 100px rgba(168, 85, 247, 0.1);
+            transition: filter 0.3s ease;
+        }
+
+        @media (max-width: 768px) {
+            .phone-frame {
+                width: 260px;
+                height: 540px;
+                border-radius: 35px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .phone-frame {
+                width: 240px;
+                height: 480px;
+                border-radius: 30px;
+            }
+        }
+
+        /* Camera Dot */
+        .camera-dot {
+            position: absolute;
+            top: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 8px;
+            height: 8px;
+            background: radial-gradient(circle, #1a1a2e 40%, #000 100%);
+            border-radius: 50%;
+            z-index: 1000;
+            box-shadow: inset 0 0 2px rgba(168, 85, 247, 0.3);
+        }
+
+        /* Status Bar - Always visible */
+        .status-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 36px;
+            padding: 8px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 900;
+            color: var(--text-primary);
+            font-size: 12px;
+            font-weight: 500;
+            background: transparent;
+        }
+
+        .status-left { display: flex; gap: 6px; align-items: center; }
+        .status-right { display: flex; gap: 6px; align-items: center; font-size: 11px; }
+
+        .battery-icon {
+            width: 20px;
+            height: 9px;
+            border: 1.5px solid currentColor;
+            border-radius: 2px;
+            position: relative;
+        }
+
+        .battery-icon::after {
+            content: '';
+            position: absolute;
+            right: -3px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 1.5px;
+            height: 4px;
+            background: currentColor;
+            border-radius: 0 1px 1px 0;
+        }
+
+        .battery-level {
+            height: 100%;
+            width: 75%;
+            background: linear-gradient(90deg, var(--primary), var(--primary-light));
+            border-radius: 1px;
+        }
+
+        /* Home Indicator - Always visible */
+        .home-indicator {
+            position: absolute;
+            bottom: 6px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: var(--text-secondary);
+            border-radius: 2px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            z-index: 900;
+        }
+
+        .home-indicator:hover {
+            background: var(--primary);
+            box-shadow: 0 0 15px var(--primary-glow);
+        }
+
+        .home-indicator:active {
+            transform: translateX(-50%) scaleX(0.9);
+        }
+
+        /* Lock Screen */
+        .lock-screen {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(10, 5, 16, 0.7) 0%, rgba(10, 5, 16, 0.9) 100%);
+            backdrop-filter: blur(30px);
+            z-index: 800;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .lock-screen.unlocked {
+            transform: translateY(-100%);
+            opacity: 0;
+        }
+
+        .lock-time {
+            font-size: 64px;
+            font-weight: 200;
+            color: white;
+            letter-spacing: -2px;
+            text-shadow: 0 0 40px var(--primary-glow);
+        }
+
+        .lock-date {
+            font-size: 14px;
+            color: rgba(255,255,255,0.7);
+            margin-top: 6px;
+        }
+
+        .unlock-hint {
+            position: absolute;
+            bottom: 60px;
+            color: rgba(255,255,255,0.5);
+            font-size: 12px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; transform: translateY(0); }
+            50% { opacity: 1; transform: translateY(-5px); }
+        }
+
+        .swipe-indicator {
+            position: absolute;
+            bottom: 30px;
+            width: 32px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--primary-light));
+            border-radius: 2px;
+            box-shadow: 0 0 15px var(--primary-glow);
+        }
+
+        /* Home Screen */
+        .home-screen {
+            position: absolute;
+            inset: 0;
+            padding: 40px 0 20px;
+            display: flex;
+            flex-direction: column;
+            background: var(--bg-primary);
+        }
+
+        .wallpaper {
+            position: absolute;
+            inset: 0;
+            background: 
+                radial-gradient(ellipse at 20% 20%, rgba(168, 85, 247, 0.12) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(139, 92, 246, 0.08) 0%, transparent 50%),
+                var(--bg-primary);
+            z-index: -1;
+        }
+
+        .light-theme .wallpaper {
+            background: 
+                radial-gradient(ellipse at 20% 20%, rgba(168, 85, 247, 0.1) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(139, 92, 246, 0.08) 0%, transparent 50%),
+                linear-gradient(180deg, #f5f0fa 0%, #ebe0f5 100%);
+        }
+
+        .widgets-area {
+            padding: 10px 12px;
+            flex: 1;
+            overflow-y: auto;
+            scrollbar-width: none;
+        }
+
+        .widgets-area::-webkit-scrollbar { display: none; }
+
+        .widget {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 14px;
+            margin-bottom: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .clock-widget {
+            text-align: center;
+            padding: 16px;
+        }
+
+        .widget-time {
+            font-size: 42px;
+            font-weight: 200;
+            color: var(--text-primary);
+            text-shadow: 0 0 30px var(--primary-glow);
+        }
+
+        .widget-date {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
+
+        .weather-widget {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 14px;
+        }
+
+        .weather-temp {
+            font-size: 32px;
+            font-weight: 300;
+            color: var(--text-primary);
+        }
+
+        .weather-icon {
+            font-size: 36px;
+        }
+
+        .weather-desc {
+            color: var(--text-secondary);
+            font-size: 11px;
+        }
+
+        .apps-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            padding: 6px 12px;
+        }
+
+        .app-icon {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .app-icon:active {
+            transform: scale(0.9);
+        }
+
+        .app-icon-img {
+            width: 46px;
+            height: 46px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .app-icon-img::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 50%;
+            background: linear-gradient(180deg, rgba(255,255,255,0.2) 0%, transparent 100%);
+        }
+
+        .app-name {
+            font-size: 9px;
+            color: var(--text-secondary);
+            text-align: center;
+            max-width: 54px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .dock {
+            background: var(--glass-bg);
+            backdrop-filter: blur(30px);
+            margin: 8px 12px 16px;
+            padding: 10px 16px;
+            border-radius: 24px;
+            display: flex;
+            justify-content: space-around;
+            border: 1px solid var(--glass-border);
+        }
+
+        .dock .app-icon-img {
+            width: 42px;
+            height: 42px;
+        }
+
+        /* Control Center */
+        .control-center {
+            position: absolute;
+            top: -100%;
+            left: 0;
+            right: 0;
+            height: 55%;
+            background: var(--overlay-bg);
+            backdrop-filter: blur(40px);
+            z-index: 700;
+            transition: top 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 44px 12px 12px;
+            border-radius: 0 0 24px 24px;
+        }
+
+        .control-center.open {
+            top: 0;
+        }
+
+        .cc-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .cc-title {
+            color: var(--text-primary);
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .cc-close {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: var(--bg-card);
+            border: none;
+            color: var(--text-primary);
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .qs-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .qs-toggle {
+            aspect-ratio: 1;
+            background: var(--bg-card);
+            border-radius: 14px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid var(--border-light);
+            color: var(--text-secondary);
+        }
+
+        .qs-toggle.active {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border-color: var(--primary-light);
+            color: white;
+            box-shadow: 0 0 15px var(--primary-glow);
+        }
+
+        .qs-toggle-icon { font-size: 18px; }
+        .qs-toggle-label { font-size: 8px; }
+
+        .brightness-slider {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            background: var(--bg-card);
+            border-radius: 12px;
+            border: 1px solid var(--border-light);
+        }
+
+        .brightness-slider span { font-size: 14px; }
+
+        .brightness-slider input {
+            flex: 1;
+            -webkit-appearance: none;
+            height: 4px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 2px;
+            outline: none;
+        }
+
+        .brightness-slider input::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 10px var(--primary-glow);
+        }
+
+        /* Notification Center */
+        .notification-center {
+            position: absolute;
+            bottom: -100%;
+            left: 0;
+            right: 0;
+            height: 50%;
+            background: var(--overlay-bg);
+            backdrop-filter: blur(40px);
+            z-index: 700;
+            transition: bottom 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 12px;
+            border-radius: 24px 24px 0 0;
+        }
+
+        .notification-center.open {
+            bottom: 0;
+        }
+
+        .nc-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .nc-title {
+            color: var(--text-primary);
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .notifications-list {
+            flex: 1;
+            overflow-y: auto;
+            max-height: calc(100% - 80px);
+        }
+
+        .notification-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: 14px;
+            padding: 12px;
+            margin-bottom: 8px;
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+        }
+
+        .notif-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .notif-content { flex: 1; }
+        .notif-title { color: var(--text-primary); font-size: 13px; font-weight: 500; }
+        .notif-text { color: var(--text-secondary); font-size: 11px; }
+        .notif-time { color: var(--text-tertiary); font-size: 10px; }
+
+        .clear-notifs-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 10px;
+            border-radius: 12px;
+            font-size: 13px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 8px;
+        }
+
+        /* App Windows */
+        .app-window {
+            position: absolute;
+            top: 36px;
+            left: 0;
+            right: 0;
+            bottom: 20px;
+            background: var(--bg-primary);
+            z-index: 500;
+            transform: scale(0.9);
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .app-window.open {
+            transform: scale(1);
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .app-header {
+            background: var(--bg-secondary);
+            padding: 12px 14px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid var(--border-light);
+            flex-shrink: 0;
+        }
+
+        .back-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-primary);
+        }
+
+        .back-btn:active {
+            background: var(--bg-elevated);
+            transform: scale(0.95);
+        }
+
+        .app-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .app-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px;
+            scrollbar-width: none;
+        }
+
+        .app-content::-webkit-scrollbar { display: none; }
+
+        /* Settings Styles */
+        .settings-section {
+            background: var(--bg-card-solid);
+            border: 1px solid var(--border-light);
+            border-radius: 16px;
+            margin-bottom: 12px;
+            overflow: hidden;
+        }
+
+        .settings-section-title {
+            padding: 12px 14px 6px;
+            font-size: 11px;
+            color: var(--primary);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .settings-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 14px;
+            gap: 12px;
+            cursor: pointer;
+            transition: background 0.2s;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .settings-item:last-child { border-bottom: none; }
+        .settings-item:active { background: var(--bg-elevated); }
+
+        .settings-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .settings-icon::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 50%;
+            background: linear-gradient(180deg, rgba(255,255,255,0.2) 0%, transparent 100%);
+        }
+
+        .settings-info { flex: 1; }
+        .settings-label { font-size: 14px; color: var(--text-primary); }
+        .settings-desc { font-size: 11px; color: var(--text-secondary); margin-top: 1px; }
+        .settings-arrow { color: var(--text-tertiary); font-size: 16px; }
+
+        .toggle-switch {
+            width: 44px;
+            height: 26px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 13px;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.3s;
+            border: 1px solid var(--border-light);
+        }
+
+        .toggle-switch.active {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border-color: var(--primary-light);
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            width: 22px;
+            height: 22px;
+            background: white;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.3s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .toggle-switch.active::after {
+            transform: translateX(18px);
+        }
+
+        /* Sub Settings */
+        .sub-settings {
+            position: absolute;
+            inset: 0;
+            background: var(--bg-primary);
+            transform: translateX(100%);
+            transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sub-settings.open {
+            transform: translateX(0);
+        }
+
+        /* Slider */
+        .slider-container {
+            padding: 12px 14px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .slider-label { font-size: 12px; color: var(--text-secondary); min-width: 26px; }
+
+        .slider-input {
+            flex: 1;
+            -webkit-appearance: none;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            outline: none;
+        }
+
+        .slider-input::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 10px var(--primary-glow);
+        }
+
+        .slider-value {
+            min-width: 36px;
+            text-align: right;
+            font-size: 12px;
+            color: var(--text-primary);
+        }
+
+        /* Theme Options */
+        .theme-option {
+            display: flex;
+            align-items: center;
+            padding: 12px 14px;
+            gap: 12px;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .theme-option:active { background: var(--bg-elevated); }
+
+        .theme-preview {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            border: 2px solid var(--border-light);
+        }
+
+        .theme-preview.light { background: linear-gradient(135deg, #f5f0fa 0%, #ebe0f5 100%); }
+        .theme-preview.purple-dark { background: linear-gradient(135deg, #1a1025 0%, #261a32 100%); }
+        .theme-preview.pure-dark { background: linear-gradient(135deg, #0a0a0a 0%, #121212 100%); }
+
+        .theme-info { flex: 1; }
+        .theme-name { color: var(--text-primary); font-size: 14px; font-weight: 500; }
+        .theme-desc { color: var(--text-secondary); font-size: 11px; }
+
+        .theme-check {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            border: 2px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: transparent;
+            font-size: 12px;
+        }
+
+        .theme-check.selected {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-color: var(--primary);
+            color: white;
+        }
+
+        /* Color Options */
+        .color-options {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            padding: 12px 14px;
+        }
+
+        .color-option {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 3px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .color-option.selected {
+            border-color: var(--text-primary);
+            transform: scale(1.1);
+        }
+
+        /* File Manager */
+        .fm-header {
+            background: var(--bg-secondary);
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .fm-title-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .fm-path {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 8px;
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+
+        .fm-toolbar {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .fm-btn {
+            padding: 6px 12px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            border: none;
+            border-radius: 16px;
+            font-size: 11px;
+            cursor: pointer;
+        }
+
+        .file-list { padding: 12px; }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 12px;
+            background: var(--bg-card-solid);
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            margin-bottom: 6px;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .file-item:active { background: var(--bg-elevated); }
+
+        .file-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .file-info { flex: 1; }
+        .file-name { font-size: 13px; color: var(--text-primary); }
+        .file-meta { font-size: 10px; color: var(--text-secondary); margin-top: 1px; }
+
+        .file-action-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: var(--bg-card);
+            border: none;
+            cursor: pointer;
+            color: var(--text-primary);
+            font-size: 12px;
+        }
+
+        /* File Viewer/Editor */
+        .file-viewer {
+            position: absolute;
+            inset: 0;
+            background: var(--bg-primary);
+            z-index: 250;
+            display: none;
+            flex-direction: column;
+        }
+
+        .file-viewer.open { display: flex; }
+
+        .file-viewer-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .file-viewer-title {
+            flex: 1;
+            color: var(--text-primary);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .file-viewer-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .fv-btn {
+            padding: 6px 12px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 11px;
+            cursor: pointer;
+        }
+
+        .file-viewer-content {
+            flex: 1;
+            padding: 12px;
+            overflow: auto;
+        }
+
+        .file-editor {
+            width: 100%;
+            height: 100%;
+            background: var(--bg-card-solid);
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            padding: 12px;
+            color: var(--text-primary);
+            font-size: 13px;
+            line-height: 1.5;
+            resize: none;
+            outline: none;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Browser */
+        .browser-header {
+            background: var(--bg-secondary);
+            padding: 12px;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .browser-nav {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 8px;
+        }
+
+        .nav-btn {
+            width: 32px;
+            height: 32px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: 50%;
+            font-size: 14px;
+            cursor: pointer;
+            color: var(--text-primary);
+        }
+
+        .url-bar {
+            display: flex;
+            align-items: center;
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            padding: 8px 12px;
+            gap: 8px;
+        }
+
+        .url-input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            font-size: 12px;
+            outline: none;
+            color: var(--text-primary);
+        }
+
+        .url-input::placeholder { color: var(--text-tertiary); }
+
+        .url-go-btn {
+            width: 28px;
+            height: 28px;
+            background: var(--primary);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .browser-frame {
+            flex: 1;
+            background: white;
+            overflow: hidden;
+        }
+
+        .browser-frame iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* About Header */
+        .about-header {
+            text-align: center;
+            padding: 20px 16px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border-radius: 16px;
+            margin-bottom: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .about-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 50%;
+            background: linear-gradient(180deg, rgba(255,255,255,0.15) 0%, transparent 100%);
+        }
+
+        .about-logo {
+            font-size: 48px;
+            margin-bottom: 8px;
+        }
+
+        .about-name {
+            font-size: 20px;
+            font-weight: 600;
+            color: white;
+        }
+
+        .about-version {
+            font-size: 12px;
+            color: rgba(255,255,255,0.7);
+            margin-top: 8px;
+            font-weight: 400;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(10px);
+            z-index: 850;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-overlay.open { display: flex; }
+
+        .modal {
+            background: var(--bg-card-solid);
+            border: 1px solid var(--border-color);
+            border-radius: 18px;
+            padding: 18px;
+            width: 100%;
+            max-width: 260px;
+            animation: modalIn 0.3s ease;
+        }
+
+        @keyframes modalIn {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .modal-title {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+
+        .modal-input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-card);
+            border-radius: 10px;
+            font-size: 14px;
+            outline: none;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+
+        .modal-input:focus {
+            border-color: var(--primary);
+        }
+
+        .modal-btns {
+            display: flex;
+            gap: 8px;
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .modal-btn.cancel {
+            background: var(--bg-card);
+            color: var(--text-secondary);
+        }
+
+        .modal-btn.confirm {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+        }
+
+        /* Context Menu */
+        .context-menu {
+            position: absolute;
+            background: var(--bg-card-solid);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+            z-index: 860;
+            min-width: 150px;
+            overflow: hidden;
+            display: none;
+        }
+
+        .context-menu.open { display: block; animation: modalIn 0.2s ease; }
+
+        .context-item {
+            padding: 10px 14px;
+            font-size: 13px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-primary);
+        }
+
+        .context-item:active { background: var(--bg-elevated); }
+        .context-item.danger { color: #f87171; }
+
+        /* Toast */
+        .toast {
+            position: absolute;
+            bottom: 70px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--bg-card-solid);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 10px 18px;
+            border-radius: 20px;
+            font-size: 12px;
+            z-index: 870;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        /* Calculator */
+        .calc-btn {
+            height: 48px;
+            border-radius: 14px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            font-size: 20px;
+            color: var(--text-primary);
+            cursor: pointer;
+        }
+
+        .calc-btn:active { background: var(--bg-elevated); }
+        .calc-btn.gray { background: rgba(255, 255, 255, 0.08); }
+        .calc-btn.orange { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; }
+
+        /* Dial Pad */
+        .dial-btn {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            font-size: 22px;
+            color: var(--text-primary);
+            cursor: pointer;
+        }
+
+        .dial-btn:active { background: var(--bg-elevated); }
+    </style>
+</head>
+<body>
+    <div class="phone-frame" id="phone">
+        <div class="camera-dot"></div>
+
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <div class="status-left">
+                <span id="statusTime">12:00</span>
+            </div>
+            <div class="status-right">
+                <span id="wifiIcon">📶</span>
+                <span id="mobileIcon">📡</span>
+                <div class="battery-icon">
+                    <div class="battery-level"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Home Indicator -->
+        <div class="home-indicator" onclick="goHome()"></div>
+
+        <!-- Lock Screen -->
+        <div class="lock-screen" id="lockScreen">
+            <div class="lock-time" id="lockTime">12:00</div>
+            <div class="lock-date" id="lockDate">Понедельник, 1 января</div>
+            <div class="unlock-hint">Проведите вверх для разблокировки</div>
+            <div class="swipe-indicator"></div>
+        </div>
+
+        <!-- Home Screen -->
+        <div class="home-screen" id="homeScreen">
+            <div class="wallpaper"></div>
+            
+            <div class="widgets-area">
+                <div class="widget clock-widget">
+                    <div class="widget-time" id="widgetTime">12:00</div>
+                    <div class="widget-date" id="widgetDate">Понедельник, 1 января</div>
+                </div>
+                
+                <div class="widget weather-widget">
+                    <div>
+                        <div class="weather-temp">23°</div>
+                        <div class="weather-desc">Ясно, Москва</div>
+                    </div>
+                    <div class="weather-icon">☀️</div>
+                </div>
+
+                <div class="apps-grid">
+                    <div class="app-icon" onclick="openApp('settings')">
+                        <div class="app-icon-img" style="background: linear-gradient(135deg, #a855f7, #7c3aed);">⚙️</div>
+                        <div class="app-name">Настройки</div>
+                    </div>
+                    <div class="app-icon" onclick="openApp('fileManager')">
+                        <div class="app-icon-img" style="background: linear-gradient(135deg, #f472b6, #db2777);">📁</div>
+                        <div class="app-name">Файлы</div>
+                    </div>
+                    <div class="app-icon" onclick="openApp('browser')">
+                        <div class="app-icon-img" style="background: linear-gradient(135deg, #38bdf8, #0284c7);">🌐</div>
+                        <div class="app-name">Браузер</div>
+                    </div>
+                    <div class="app-icon" onclick="openApp('gallery')">
+                        <div class="app-icon-img" style="background: linear-gradient(135deg, #4ade80, #16a34a);">🖼️</div>
+                        <div class="app-name">Галерея</div>
+                    </div>
+                    <div class="app-icon" onclick="openApp('camera')">
+                        <div class="app-icon-img" style="background: linear-gradient(135deg, #fb923c, #ea580c);">📷</div>
+                        <div class="app-name">Камера</div>
+                    </div>
+                    <div class="app-icon" onclick="openApp('phone')">
+                        <div class="app-icon-img" style="background: linear-gradient(135deg, #22d3ee, #0891b2);">📞</div>
+                        <div class="app-name">Телефон</div>
+                    </div>
+                    <div class="app-icon" onclick="openApp('messages')">
+                        <div class="app-icon-img" style="background: linear-gradient(135deg, #a78bfa, #7c3aed);">💬</div>
+                        <div class="app-name">Сообщения</div>
+                    </div>
+                    <div class="app-icon" onclick="openApp('calculator')">
+                        <div class="app-icon-img" style="background: linear-gradient(135deg, #60a5fa, #2563eb);">🔢</div>
+                        <div class="app-name">Калькулятор</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dock">
+                <div class="app-icon" onclick="openApp('phone')">
+                    <div class="app-icon-img" style="background: linear-gradient(135deg, #22d3ee, #0891b2);">📞</div>
+                </div>
+                <div class="app-icon" onclick="openApp('messages')">
+                    <div class="app-icon-img" style="background: linear-gradient(135deg, #a78bfa, #7c3aed);">💬</div>
+                </div>
+                <div class="app-icon" onclick="openApp('browser')">
+                    <div class="app-icon-img" style="background: linear-gradient(135deg, #38bdf8, #0284c7);">🌐</div>
+                </div>
+                <div class="app-icon" onclick="openApp('camera')">
+                    <div class="app-icon-img" style="background: linear-gradient(135deg, #fb923c, #ea580c);">📷</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Control Center -->
+        <div class="control-center" id="controlCenter">
+            <div class="cc-header">
+                <span class="cc-title">Центр управления</span>
+                <button class="cc-close" onclick="toggleControlCenter(false)">✕</button>
+            </div>
+
+            <div class="qs-grid">
+                <button class="qs-toggle active" id="qsWifi" onclick="toggleQS(this, 'wifi')">
+                    <span class="qs-toggle-icon">📶</span>
+                    <span class="qs-toggle-label">Wi-Fi</span>
+                </button>
+                <button class="qs-toggle active" id="qsBluetooth" onclick="toggleQS(this, 'bluetooth')">
+                    <span class="qs-toggle-icon">🔵</span>
+                    <span class="qs-toggle-label">Bluetooth</span>
+                </button>
+                <button class="qs-toggle" id="qsAirplane" onclick="toggleQS(this, 'airplane')">
+                    <span class="qs-toggle-icon">✈️</span>
+                    <span class="qs-toggle-label">Авиа</span>
+                </button>
+                <button class="qs-toggle active" id="qsMobile" onclick="toggleQS(this, 'mobile')">
+                    <span class="qs-toggle-icon">📡</span>
+                    <span class="qs-toggle-label">Данные</span>
+                </button>
+                <button class="qs-toggle" id="qsFlashlight" onclick="toggleQS(this, 'flashlight')">
+                    <span class="qs-toggle-icon">🔦</span>
+                    <span class="qs-toggle-label">Фонарик</span>
+                </button>
+                <button class="qs-toggle active" id="qsLocation" onclick="toggleQS(this, 'location')">
+                    <span class="qs-toggle-icon">📍</span>
+                    <span class="qs-toggle-label">Локация</span>
+                </button>
+                <button class="qs-toggle" id="qsDND" onclick="toggleQS(this, 'dnd')">
+                    <span class="qs-toggle-icon">🌙</span>
+                    <span class="qs-toggle-label">Тишина</span>
+                </button>
+                <button class="qs-toggle" id="qsRotate" onclick="toggleQS(this, 'rotate')">
+                    <span class="qs-toggle-icon">🔄</span>
+                    <span class="qs-toggle-label">Поворот</span>
+                </button>
+            </div>
+
+            <div class="brightness-slider">
+                <span>🔅</span>
+                <input type="range" min="20" max="100" value="100" id="brightnessSlider" oninput="adjustBrightness(this.value)">
+                <span>🔆</span>
+            </div>
+        </div>
+
+        <!-- Notification Center -->
+        <div class="notification-center" id="notificationCenter">
+            <div class="nc-header">
+                <span class="nc-title">Уведомления</span>
+                <button class="cc-close" onclick="toggleNotificationCenter(false)">✕</button>
+            </div>
+
+            <div class="notifications-list" id="notificationsList">
+                <div class="notification-item">
+                    <div class="notif-icon" style="background: linear-gradient(135deg, #a78bfa, #7c3aed);">💬</div>
+                    <div class="notif-content">
+                        <div class="notif-title">Алексей</div>
+                        <div class="notif-text">Привет! Как дела?</div>
+                    </div>
+                    <div class="notif-time">2 мин</div>
+                </div>
+                <div class="notification-item">
+                    <div class="notif-icon" style="background: linear-gradient(135deg, #60a5fa, #2563eb);">📧</div>
+                    <div class="notif-content">
+                        <div class="notif-title">Почта</div>
+                        <div class="notif-text">Новое сообщение</div>
+                    </div>
+                    <div class="notif-time">15 мин</div>
+                </div>
+                <div class="notification-item">
+                    <div class="notif-icon" style="background: linear-gradient(135deg, #4ade80, #16a34a);">🔔</div>
+                    <div class="notif-content">
+                        <div class="notif-title">Система</div>
+                        <div class="notif-text">Обновление доступно</div>
+                    </div>
+                    <div class="notif-time">1 ч</div>
+                </div>
+            </div>
+
+            <button class="clear-notifs-btn" onclick="clearNotifications()">Очистить все</button>
+        </div>
+
+        <!-- Settings App -->
+        <div class="app-window" id="settingsApp">
+            <div class="app-header">
+                <button class="back-btn" onclick="closeApp('settingsApp')">←</button>
+                <h1 class="app-title">Настройки</h1>
+            </div>
+            <div class="app-content" id="settingsContent">
+                <div class="settings-main">
+                    <div class="settings-section">
+                        <div class="settings-item" onclick="openSubSettings('display')">
+                            <div class="settings-icon" style="background: linear-gradient(135deg, #fb923c, #ea580c);">🔆</div>
+                            <div class="settings-info">
+                                <div class="settings-label">Экран и персонализация</div>
+                                <div class="settings-desc">Яркость, тема, обои, цвета</div>
+                            </div>
+                            <span class="settings-arrow">›</span>
+                        </div>
+                        <div class="settings-item" onclick="openSubSettings('apps')">
+                            <div class="settings-icon" style="background: linear-gradient(135deg, #a78bfa, #7c3aed);">📱</div>
+                            <div class="settings-info">
+                                <div class="settings-label">Приложения</div>
+                                <div class="settings-desc">8 установлено</div>
+                            </div>
+                            <span class="settings-arrow">›</span>
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <div class="settings-item" onclick="openSubSettings('system')">
+                            <div class="settings-icon" style="background: linear-gradient(135deg, #94a3b8, #64748b);">⚙️</div>
+                            <div class="settings-info">
+                                <div class="settings-label">Система</div>
+                                <div class="settings-desc">Язык, обновления, сброс</div>
+                            </div>
+                            <span class="settings-arrow">›</span>
+                        </div>
+                        <div class="settings-item" onclick="openSubSettings('about')">
+                            <div class="settings-icon" style="background: linear-gradient(135deg, #a855f7, #7c3aed);">ℹ️</div>
+                            <div class="settings-info">
+                                <div class="settings-label">О телефоне</div>
+                                <div class="settings-desc">AsterOS 1.0 Preview 1</div>
+                            </div>
+                            <span class="settings-arrow">›</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sub-settings" id="subSettings">
+                    <div class="app-header">
+                        <button class="back-btn" onclick="closeSubSettings()">←</button>
+                        <h1 class="app-title" id="subSettingsTitle">Настройка</h1>
+                    </div>
+                    <div class="app-content" id="subSettingsContent"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- File Manager App -->
+        <div class="app-window" id="fileManagerApp">
+            <div class="fm-header">
+                <div class="fm-title-row">
+                    <button class="back-btn" onclick="closeApp('fileManagerApp')">←</button>
+                    <h1 class="app-title">Файлы</h1>
+                </div>
+                <div class="fm-path">
+                    <span>📁</span>
+                    <span id="currentPath">/Хранилище</span>
+                </div>
+                <div class="fm-toolbar">
+                    <button class="fm-btn" onclick="showCreateFolderModal()">📁 Папка</button>
+                    <button class="fm-btn" onclick="showCreateFileModal()">📄 Файл</button>
+                    <button class="fm-btn" onclick="navigateUp()">⬆️</button>
+                </div>
+            </div>
+            <div class="app-content file-list" id="fileList"></div>
+
+            <div class="file-viewer" id="fileViewer">
+                <div class="file-viewer-header">
+                    <button class="back-btn" onclick="closeFileViewer()">←</button>
+                    <span class="file-viewer-title" id="fileViewerTitle">Файл</span>
+                    <div class="file-viewer-actions">
+                        <button class="fv-btn" id="saveFileBtn" onclick="saveFile()">💾</button>
+                    </div>
+                </div>
+                <div class="file-viewer-content">
+                    <textarea class="file-editor" id="fileEditor"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- Browser App -->
+        <div class="app-window" id="browserApp">
+            <div class="browser-header">
+                <div class="browser-nav">
+                    <button class="nav-btn" onclick="browserBack()">←</button>
+                    <button class="nav-btn" onclick="browserForward()">→</button>
+                    <button class="nav-btn" onclick="browserRefresh()">🔄</button>
+                    <button class="nav-btn" onclick="browserHome()">🏠</button>
+                    <button class="back-btn" style="margin-left: auto;" onclick="closeApp('browserApp')">✕</button>
+                </div>
+                <div class="url-bar">
+                    <span>🔒</span>
+                    <input type="text" class="url-input" id="urlInput" placeholder="Введите URL..." value="https://www.google.com">
+                    <button class="url-go-btn" onclick="navigateToUrl()">→</button>
+                </div>
+            </div>
+            <div class="browser-frame">
+                <iframe id="browserFrame" src="about:blank" sandbox="allow-scripts allow-same-origin allow-forms"></iframe>
+            </div>
+        </div>
+
+        <!-- Gallery App -->
+        <div class="app-window" id="galleryApp">
+            <div class="app-header">
+                <button class="back-btn" onclick="closeApp('galleryApp')">←</button>
+                <h1 class="app-title">Галерея</h1>
+            </div>
+            <div class="app-content">
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px;">
+                    <div style="aspect-ratio: 1; background: linear-gradient(135deg, #a855f7, #7c3aed); border-radius: 6px;"></div>
+                    <div style="aspect-ratio: 1; background: linear-gradient(135deg, #f472b6, #db2777); border-radius: 6px;"></div>
+                    <div style="aspect-ratio: 1; background: linear-gradient(135deg, #38bdf8, #0284c7); border-radius: 6px;"></div>
+                    <div style="aspect-ratio: 1; background: linear-gradient(135deg, #4ade80, #16a34a); border-radius: 6px;"></div>
+                    <div style="aspect-ratio: 1; background: linear-gradient(135deg, #fb923c, #ea580c); border-radius: 6px;"></div>
+                    <div style="aspect-ratio: 1; background: linear-gradient(135deg, #22d3ee, #0891b2); border-radius: 6px;"></div>
+                </div>
+                <p style="text-align: center; color: var(--text-secondary); margin-top: 12px; font-size: 11px;">6 фотографий</p>
+            </div>
+        </div>
+
+        <!-- Camera App -->
+        <div class="app-window" id="cameraApp" style="background: #000;">
+            <div style="position: absolute; top: 10px; left: 12px; right: 12px; display: flex; justify-content: space-between; z-index: 10;">
+                <button class="back-btn" onclick="closeApp('cameraApp')">←</button>
+                <button class="back-btn">⚡</button>
+            </div>
+            <div style="flex: 1; display: flex; align-items: center; justify-content: center;">
+                <div style="width: 90%; height: 65%; background: #1a1025; border-radius: 16px; display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,0.4); border: 1px solid rgba(168, 85, 247, 0.2);">📷 Предпросмотр</div>
+            </div>
+            <div style="padding: 16px; display: flex; justify-content: center; align-items: center; gap: 24px;">
+                <div style="width: 40px; height: 40px; border-radius: 8px; background: linear-gradient(135deg, #a855f7, #7c3aed);"></div>
+                <button style="width: 60px; height: 60px; border-radius: 50%; background: white; border: 4px solid rgba(168, 85, 247, 0.5); cursor: pointer;"></button>
+                <button style="width: 40px; height: 40px; border-radius: 50%; background: rgba(168, 85, 247, 0.2); border: none; color: white; font-size: 18px;">🔄</button>
+            </div>
+        </div>
+
+        <!-- Phone App -->
+        <div class="app-window" id="phoneApp">
+            <div class="app-header">
+                <button class="back-btn" onclick="closeApp('phoneApp')">←</button>
+                <h1 class="app-title">Телефон</h1>
+            </div>
+            <div class="app-content" style="display: flex; flex-direction: column; align-items: center;">
+                <div style="font-size: 24px; letter-spacing: 2px; margin: 16px 0; min-height: 30px; color: var(--text-primary);" id="dialDisplay"></div>
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
+                    <button class="dial-btn" onclick="dialPress('1')">1</button>
+                    <button class="dial-btn" onclick="dialPress('2')">2</button>
+                    <button class="dial-btn" onclick="dialPress('3')">3</button>
+                    <button class="dial-btn" onclick="dialPress('4')">4</button>
+                    <button class="dial-btn" onclick="dialPress('5')">5</button>
+                    <button class="dial-btn" onclick="dialPress('6')">6</button>
+                    <button class="dial-btn" onclick="dialPress('7')">7</button>
+                    <button class="dial-btn" onclick="dialPress('8')">8</button>
+                    <button class="dial-btn" onclick="dialPress('9')">9</button>
+                    <button class="dial-btn" onclick="dialPress('*')">*</button>
+                    <button class="dial-btn" onclick="dialPress('0')">0</button>
+                    <button class="dial-btn" onclick="dialPress('#')">#</button>
+                </div>
+                <div style="display: flex; gap: 16px; margin-top: 16px;">
+                    <button onclick="dialClear()" style="width: 44px; height: 44px; border-radius: 50%; background: var(--bg-card); border: 1px solid var(--border-light); font-size: 16px; cursor: pointer; color: var(--text-primary);">⌫</button>
+                    <button style="width: 52px; height: 52px; border-radius: 50%; background: linear-gradient(135deg, #22c55e, #16a34a); border: none; font-size: 22px; cursor: pointer; color: white;">📞</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Messages App -->
+        <div class="app-window" id="messagesApp">
+            <div class="app-header">
+                <button class="back-btn" onclick="closeApp('messagesApp')">←</button>
+                <h1 class="app-title">Сообщения</h1>
+            </div>
+            <div class="app-content">
+                <div class="settings-section">
+                    <div class="settings-item">
+                        <div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #a855f7, #7c3aed); display: flex; align-items: center; justify-content: center; color: white; font-size: 16px;">А</div>
+                        <div class="settings-info">
+                            <div class="settings-label">Алексей</div>
+                            <div class="settings-desc">Привет! Как дела?</div>
+                        </div>
+                        <span style="font-size: 10px; color: var(--text-tertiary);">12:30</span>
+                    </div>
+                    <div class="settings-item">
+                        <div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #4ade80, #16a34a); display: flex; align-items: center; justify-content: center; color: white; font-size: 16px;">М</div>
+                        <div class="settings-info">
+                            <div class="settings-label">Мария</div>
+                            <div class="settings-desc">Увидимся завтра!</div>
+                        </div>
+                        <span style="font-size: 10px; color: var(--text-tertiary);">Вчера</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Calculator App -->
+        <div class="app-window" id="calculatorApp">
+            <div class="app-header">
+                <button class="back-btn" onclick="closeApp('calculatorApp')">←</button>
+                <h1 class="app-title">Калькулятор</h1>
+            </div>
+            <div style="flex: 1; padding: 12px; display: flex; flex-direction: column;">
+                <div style="flex: 1; display: flex; flex-direction: column; justify-content: flex-end; align-items: flex-end; padding: 12px;">
+                    <div id="calcExpression" style="color: var(--text-secondary); font-size: 16px; min-height: 22px;"></div>
+                    <div id="calcDisplay" style="color: var(--text-primary); font-size: 36px; font-weight: 300;">0</div>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;">
+                    <button class="calc-btn gray" onclick="calcClear()">C</button>
+                    <button class="calc-btn gray" onclick="calcInput('±')">±</button>
+                    <button class="calc-btn gray" onclick="calcInput('%')">%</button>
+                    <button class="calc-btn orange" onclick="calcInput('÷')">÷</button>
+                    <button class="calc-btn" onclick="calcInput('7')">7</button>
+                    <button class="calc-btn" onclick="calcInput('8')">8</button>
+                    <button class="calc-btn" onclick="calcInput('9')">9</button>
+                    <button class="calc-btn orange" onclick="calcInput('×')">×</button>
+                    <button class="calc-btn" onclick="calcInput('4')">4</button>
+                    <button class="calc-btn" onclick="calcInput('5')">5</button>
+                    <button class="calc-btn" onclick="calcInput('6')">6</button>
+                    <button class="calc-btn orange" onclick="calcInput('-')">−</button>
+                    <button class="calc-btn" onclick="calcInput('1')">1</button>
+                    <button class="calc-btn" onclick="calcInput('2')">2</button>
+                    <button class="calc-btn" onclick="calcInput('3')">3</button>
+                    <button class="calc-btn orange" onclick="calcInput('+')">+</button>
+                    <button class="calc-btn" style="grid-column: span 2;" onclick="calcInput('0')">0</button>
+                    <button class="calc-btn" onclick="calcInput('.')">.</button>
+                    <button class="calc-btn orange" onclick="calcEquals()">=</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal -->
+        <div class="modal-overlay" id="modalOverlay">
+            <div class="modal">
+                <div class="modal-title" id="modalTitle">Новая папка</div>
+                <input type="text" class="modal-input" id="modalInput" placeholder="Введите имя...">
+                <div class="modal-btns">
+                    <button class="modal-btn cancel" onclick="closeModal()">Отмена</button>
+                    <button class="modal-btn confirm" id="modalConfirmBtn" onclick="confirmModal()">Создать</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Context Menu -->
+        <div class="context-menu" id="contextMenu">
+            <div class="context-item" onclick="renameItem()">✏️ Переименовать</div>
+            <div class="context-item" onclick="copyItem()">📋 Копировать</div>
+            <div class="context-item danger" onclick="deleteItem()">🗑️ Удалить</div>
+        </div>
+
+        <!-- Toast -->
+        <div class="toast" id="toast"></div>
+    </div>
+
+    <script>
+        // ===== SYSTEM STATE =====
+        const state = {
+            locked: true,
+            currentApp: null,
+            brightness: 100,
+            theme: 'purple-dark',
+            settings: {
+                wifi: true,
+                bluetooth: true,
+                mobileData: true,
+                location: true,
+                airplane: false,
+                flashlight: false,
+                dnd: false,
+                autoRotate: false,
+                accentColor: '#a855f7'
+            },
+            fileSystem: {
+                '/Хранилище': [
+                    { name: 'Документы', type: 'folder', modified: '10.01.2025' },
+                    { name: 'Загрузки', type: 'folder', modified: '09.01.2025' },
+                    { name: 'Изображения', type: 'folder', modified: '08.01.2025' },
+                    { name: 'заметки.txt', type: 'file', size: '2 КБ', modified: '10.01.2025', content: 'Это мои заметки.\n\nСписок дел:\n1. Купить продукты\n2. Позвонить маме\n3. Закончить проект' },
+                ],
+                '/Хранилище/Документы': [
+                    { name: 'отчёт.txt', type: 'file', size: '1.5 КБ', modified: '09.01.2025', content: 'Отчёт за январь 2025\n\nВыполнено:\n- Задача 1\n- Задача 2\n- Задача 3' },
+                ],
+                '/Хранилище/Загрузки': [
+                    { name: 'readme.txt', type: 'file', size: '1 КБ', modified: '09.01.2025', content: 'Добро пожаловать в AsterOS!' },
+                ],
+                '/Хранилище/Изображения': [
+                    { name: 'фото.jpg', type: 'file', size: '3.2 МБ', modified: '10.01.2025', content: '[Изображение]' },
+                ],
+            },
+            currentPath: '/Хранилище',
+            currentEditingFile: null,
+            dialNumber: '',
+            calcDisplay: '0',
+            calcExpression: '',
+            calcNewNumber: true,
+            selectedFileItem: null,
+            modalCallback: null
+        };
+
+        // ===== TIME UPDATE =====
+        function updateTime() {
+            const now = new Date();
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const time = `${hours}:${minutes}`;
+            
+            const days = ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'];
+            const months = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
+            const date = `${days[now.getDay()]}, ${now.getDate()} ${months[now.getMonth()]}`;
+            
+            document.getElementById('statusTime').textContent = time;
+            document.getElementById('lockTime').textContent = time;
+            document.getElementById('lockDate').textContent = date;
+            document.getElementById('widgetTime').textContent = time;
+            document.getElementById('widgetDate').textContent = date;
+        }
+        
+        updateTime();
+        setInterval(updateTime, 1000);
+
+        // ===== BRIGHTNESS =====
+        function adjustBrightness(value) {
+            state.brightness = value;
+            const brightness = value / 100;
+            document.getElementById('phone').style.filter = `brightness(${brightness})`;
+        }
+
+        // ===== LOCK SCREEN =====
+        const lockScreen = document.getElementById('lockScreen');
+        let touchStartY = 0;
+
+        lockScreen.addEventListener('touchstart', (e) => {
+            touchStartY = e.touches[0].clientY;
+        });
+
+        lockScreen.addEventListener('touchend', (e) => {
+            const touchEndY = e.changedTouches[0].clientY;
+            if (touchStartY - touchEndY > 60) unlockPhone();
+        });
+
+        lockScreen.addEventListener('click', unlockPhone);
+
+        function unlockPhone() {
+            state.locked = false;
+            lockScreen.classList.add('unlocked');
+        }
+
+        // ===== CONTROL CENTER =====
+        let ccTouchStartY = 0;
+        const homeScreen = document.getElementById('homeScreen');
+
+        homeScreen.addEventListener('touchstart', (e) => {
+            ccTouchStartY = e.touches[0].clientY;
+        });
+
+        homeScreen.addEventListener('touchmove', (e) => {
+            const phoneRect = document.getElementById('phone').getBoundingClientRect();
+            const relativeY = e.touches[0].clientY - phoneRect.top;
+            
+            if (ccTouchStartY < 60 && e.touches[0].clientY - ccTouchStartY > 40) {
+                toggleControlCenter(true);
+            }
+        });
+
+        function toggleControlCenter(open) {
+            const cc = document.getElementById('controlCenter');
+            const nc = document.getElementById('notificationCenter');
+            nc.classList.remove('open');
+            cc.classList.toggle('open', open);
+        }
+
+        // ===== NOTIFICATION CENTER =====
+        function toggleNotificationCenter(open) {
+            const nc = document.getElementById('notificationCenter');
+            const cc = document.getElementById('controlCenter');
+            cc.classList.remove('open');
+            nc.classList.toggle('open', open);
+        }
+
+        function clearNotifications() {
+            document.getElementById('notificationsList').innerHTML = '<p style="text-align: center; color: var(--text-secondary); padding: 20px;">Нет уведомлений</p>';
+            showToast('Уведомления очищены');
+        }
+
+        // Long press on home screen for notifications
+        let longPressTimer;
+        homeScreen.addEventListener('touchstart', (e) => {
+            const phoneRect = document.getElementById('phone').getBoundingClientRect();
+            const relativeY = e.touches[0].clientY - phoneRect.top;
+            if (relativeY > 100) {
+                longPressTimer = setTimeout(() => {
+                    toggleNotificationCenter(true);
+                }, 500);
+            }
+        });
+
+        homeScreen.addEventListener('touchend', () => {
+            clearTimeout(longPressTimer);
+        });
+
+        // ===== QUICK SETTINGS =====
+        function toggleQS(btn, setting) {
+            btn.classList.toggle('active');
+            const isActive = btn.classList.contains('active');
+            
+            switch(setting) {
+                case 'wifi':
+                    state.settings.wifi = isActive;
+                    document.getElementById('wifiIcon').style.opacity = isActive ? 1 : 0.3;
+                    break;
+                case 'bluetooth':
+                    state.settings.bluetooth = isActive;
+                    break;
+                case 'mobile':
+                    state.settings.mobileData = isActive;
+                    document.getElementById('mobileIcon').style.opacity = isActive ? 1 : 0.3;
+                    break;
+                case 'location':
+                    state.settings.location = isActive;
+                    break;
+                case 'airplane':
+                    state.settings.airplane = isActive;
+                    break;
+                case 'flashlight':
+                    state.settings.flashlight = isActive;
+                    break;
+                case 'dnd':
+                    state.settings.dnd = isActive;
+                    break;
+                case 'rotate':
+                    state.settings.autoRotate = isActive;
+                    break;
+            }
+        }
+
+        // ===== GO HOME =====
+        function goHome() {
+            document.querySelectorAll('.app-window.open').forEach(app => {
+                app.classList.remove('open');
+            });
+            state.currentApp = null;
+            closeSubSettings();
+            toggleControlCenter(false);
+            toggleNotificationCenter(false);
+            closeFileViewer();
+        }
+
+        // ===== APP MANAGEMENT =====
+        function openApp(appName) {
+            const appIds = {
+                settings: 'settingsApp',
+                fileManager: 'fileManagerApp',
+                browser: 'browserApp',
+                gallery: 'galleryApp',
+                camera: 'cameraApp',
+                phone: 'phoneApp',
+                messages: 'messagesApp',
+                calculator: 'calculatorApp'
+            };
+
+            const appId = appIds[appName];
+            if (!appId) {
+                showToast('Приложение недоступно');
+                return;
+            }
+
+            const appWindow = document.getElementById(appId);
+            if (appWindow) {
+                appWindow.classList.add('open');
+                state.currentApp = appName;
+
+                if (appName === 'fileManager') {
+                    renderFileList();
+                }
+            }
+        }
+
+        function closeApp(appId) {
+            const appWindow = document.getElementById(appId);
+            if (appWindow) {
+                appWindow.classList.remove('open');
+                state.currentApp = null;
+            }
+        }
+
+        // ===== SETTINGS =====
+        function openSubSettings(section) {
+            const subSettings = document.getElementById('subSettings');
+            const title = document.getElementById('subSettingsTitle');
+            const content = document.getElementById('subSettingsContent');
+
+            const titles = {
+                display: 'Экран и персонализация',
+                personalization: 'Персонализация',
+                apps: 'Приложения',
+                system: 'Система',
+                about: 'О телефоне'
+            };
+
+            title.textContent = titles[section] || 'Настройки';
+            content.innerHTML = getSubSettingsContent(section);
+            subSettings.classList.add('open');
+        }
+
+        function closeSubSettings() {
+            document.getElementById('subSettings').classList.remove('open');
+        }
+
+        function getSubSettingsContent(section) {
+            switch(section) {
+                case 'display':
+                    return `
+                        <div class="settings-section">
+                            <div class="settings-section-title">Яркость</div>
+                            <div class="slider-container">
+                                <span class="slider-label">🔅</span>
+                                <input type="range" class="slider-input" min="20" max="100" value="${state.brightness}" oninput="adjustBrightness(this.value); this.nextElementSibling.textContent = this.value + '%'">
+                                <span class="slider-value">${state.brightness}%</span>
+                            </div>
+                        </div>
+                        <div class="settings-section">
+                            <div class="settings-section-title">Тема оформления</div>
+                            <div class="theme-option" onclick="setTheme('light')">
+                                <div class="theme-preview light"></div>
+                                <div class="theme-info">
+                                    <div class="theme-name">Светлая</div>
+                                    <div class="theme-desc">Светлый фон</div>
+                                </div>
+                                <div class="theme-check ${state.theme === 'light' ? 'selected' : ''}" id="themeLight">✓</div>
+                            </div>
+                            <div class="theme-option" onclick="setTheme('purple-dark')">
+                                <div class="theme-preview purple-dark"></div>
+                                <div class="theme-info">
+                                    <div class="theme-name">Тёмная фиолетовая</div>
+                                    <div class="theme-desc">С фиолетовым оттенком</div>
+                                </div>
+                                <div class="theme-check ${state.theme === 'purple-dark' ? 'selected' : ''}" id="themePurple">✓</div>
+                            </div>
+                            <div class="theme-option" onclick="setTheme('pure-dark')">
+                                <div class="theme-preview pure-dark"></div>
+                                <div class="theme-info">
+                                    <div class="theme-name">Чисто тёмная</div>
+                                    <div class="theme-desc">Полностью чёрная</div>
+                                </div>
+                                <div class="theme-check ${state.theme === 'pure-dark' ? 'selected' : ''}" id="themeDark">✓</div>
+                            </div>
+                        </div>
+                        ${state.theme !== 'light' ? `
+                        <div class="settings-section">
+                            <div class="settings-item" onclick="openSubSettings('personalization')">
+                                <div class="settings-icon" style="background: linear-gradient(135deg, #f472b6, #db2777);">🎨</div>
+                                <div class="settings-info">
+                                    <div class="settings-label">Персонализация</div>
+                                    <div class="settings-desc">Цвета акцента</div>
+                                </div>
+                                <span class="settings-arrow">›</span>
+                            </div>
+                        </div>
+                        ` : ''}
+                        <div class="settings-section">
+                            <div class="settings-item">
+                                <div class="settings-info">
+                                    <div class="settings-label">Частота обновления</div>
+                                    <div class="settings-desc">120 Гц</div>
+                                </div>
+                                <span class="settings-arrow">›</span>
+                            </div>
+                            <div class="settings-item">
+                                <div class="settings-info">
+                                    <div class="settings-label">Размер шрифта</div>
+                                    <div class="settings-desc">Средний</div>
+                                </div>
+                                <span class="settings-arrow">›</span>
+                            </div>
+                        </div>
+                    `;
+                case 'personalization':
+                    return `
+                        <div class="settings-section">
+                            <div class="settings-section-title">Цвет акцента</div>
+                            <div class="color-options">
+                                <div class="color-option ${state.settings.accentColor === '#a855f7' ? 'selected' : ''}" style="background: linear-gradient(135deg, #a855f7, #7c3aed);" onclick="selectColor(this, '#a855f7')"></div>
+                                <div class="color-option ${state.settings.accentColor === '#ec4899' ? 'selected' : ''}" style="background: linear-gradient(135deg, #ec4899, #db2777);" onclick="selectColor(this, '#ec4899')"></div>
+                                <div class="color-option ${state.settings.accentColor === '#3b82f6' ? 'selected' : ''}" style="background: linear-gradient(135deg, #3b82f6, #2563eb);" onclick="selectColor(this, '#3b82f6')"></div>
+                                <div class="color-option ${state.settings.accentColor === '#22c55e' ? 'selected' : ''}" style="background: linear-gradient(135deg, #22c55e, #16a34a);" onclick="selectColor(this, '#22c55e')"></div>
+                                <div class="color-option ${state.settings.accentColor === '#f59e0b' ? 'selected' : ''}" style="background: linear-gradient(135deg, #f59e0b, #d97706);" onclick="selectColor(this, '#f59e0b')"></div>
+                                <div class="color-option ${state.settings.accentColor === '#ef4444' ? 'selected' : ''}" style="background: linear-gradient(135deg, #ef4444, #dc2626);" onclick="selectColor(this, '#ef4444')"></div>
+                            </div>
+                        </div>
+                    `;
+                case 'apps':
+                    return `
+                        <div class="settings-section">
+                            <div class="settings-section-title">Установленные (8)</div>
+                            <div class="settings-item">
+                                <div class="app-icon-img" style="width: 36px; height: 36px; background: linear-gradient(135deg, #a855f7, #7c3aed); font-size: 16px;">⚙️</div>
+                                <div class="settings-info">
+                                    <div class="settings-label">Настройки</div>
+                                    <div class="settings-desc">12 МБ</div>
+                                </div>
+                            </div>
+                            <div class="settings-item">
+                                <div class="app-icon-img" style="width: 36px; height: 36px; background: linear-gradient(135deg, #f472b6, #db2777); font-size: 16px;">📁</div>
+                                <div class="settings-info">
+                                    <div class="settings-label">Файлы</div>
+                                    <div class="settings-desc">8 МБ</div>
+                                </div>
+                            </div>
+                            <div class="settings-item">
+                                <div class="app-icon-img" style="width: 36px; height: 36px; background: linear-gradient(135deg, #38bdf8, #0284c7); font-size: 16px;">🌐</div>
+                                <div class="settings-info">
+                                    <div class="settings-label">Браузер</div>
+                                    <div class="settings-desc">45 МБ</div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                case 'system':
+                    return `
+                        <div class="settings-section">
+                            <div class="settings-item">
+                                <div class="settings-info">
+                                    <div class="settings-label">Язык</div>
+                                    <div class="settings-desc">Русский</div>
+                                </div>
+                                <span class="settings-arrow">›</span>
+                            </div>
+                            <div class="settings-item">
+                                <div class="settings-info">
+                                    <div class="settings-label">Дата и время</div>
+                                    <div class="settings-desc">Автоматически</div>
+                                </div>
+                                <span class="settings-arrow">›</span>
+                            </div>
+                        </div>
+                        <div class="settings-section">
+                            <div class="settings-item">
+                                <div class="settings-info">
+                                    <div class="settings-label">Обновление системы</div>
+                                    <div class="settings-desc">Последняя версия</div>
+                                </div>
+                                <span class="settings-arrow">›</span>
+                            </div>
+                        </div>
+                        <div class="settings-section">
+                            <div class="settings-item" style="color: #f87171;">
+                                <div class="settings-info">
+                                    <div class="settings-label" style="color: #f87171;">Сброс до заводских</div>
+                                    <div class="settings-desc">Удалить все данные</div>
+                                </div>
+                                <span class="settings-arrow">›</span>
+                            </div>
+                        </div>
+                    `;
+                case 'about':
+                    return `
+                        <div class="about-header">
+                            <div class="about-logo">✦</div>
+                            <div class="about-name">AsterOS</div>
+                            <div class="about-version">1.0 Preview 1</div>
+                        </div>
+                        <div class="settings-section">
+                            <div class="settings-item">
+                                <div class="settings-info">
+                                    <div class="settings-label">Устройство</div>
+                                    <div class="settings-desc">Aster X1</div>
+                                </div>
+                            </div>
+                            <div class="settings-item">
+                                <div class="settings-info">
+                                    <div class="settings-label">Процессор</div>
+                                    <div class="settings-desc">ASSoc X1</div>
+                                </div>
+                            </div>
+                            <div class="settings-item">
+                                <div class="settings-info">
+                                    <div class="settings-label">Версия Android</div>
+                                    <div class="settings-desc">15</div>
+                                </div>
+                            </div>
+                            <div class="settings-item">
+                                <div class="settings-info">
+                                    <div class="settings-label">Сборка</div>
+                                    <div class="settings-desc">1.0.0_Pre1</div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                default:
+                    return '<p style="padding: 16px; color: var(--text-secondary);">Раздел в разработке</p>';
+            }
+        }
+
+        function setTheme(theme) {
+            state.theme = theme;
+            const phone = document.getElementById('phone');
+            
+            phone.classList.remove('light-theme', 'pure-dark-theme');
+            
+            if (theme === 'light') {
+                phone.classList.add('light-theme');
+            } else if (theme === 'pure-dark') {
+                phone.classList.add('pure-dark-theme');
+            }
+            
+            // Refresh display settings to show/hide personalization
+            const subContent = document.getElementById('subSettingsContent');
+            const subTitle = document.getElementById('subSettingsTitle');
+            if (subTitle.textContent === 'Экран и персонализация') {
+                subContent.innerHTML = getSubSettingsContent('display');
+            }
+            
+            showToast('Тема изменена');
+        }
+
+        function selectColor(el, color) {
+            document.querySelectorAll('.color-option').forEach(c => c.classList.remove('selected'));
+            el.classList.add('selected');
+            state.settings.accentColor = color;
+            document.documentElement.style.setProperty('--primary', color);
+            showToast('Цвет акцента изменён');
+        }
+
+        // ===== FILE MANAGER =====
+        function renderFileList() {
+            const fileList = document.getElementById('fileList');
+            const files = state.fileSystem[state.currentPath] || [];
+            document.getElementById('currentPath').textContent = state.currentPath;
+
+            if (files.length === 0) {
+                fileList.innerHTML = '<div style="text-align: center; color: var(--text-secondary); padding: 30px;">Папка пуста</div>';
+                return;
+            }
+
+            fileList.innerHTML = files.map((file, index) => `
+                <div class="file-item" onclick="handleFileClick('${file.name}', '${file.type}', ${index})">
+                    <div class="file-icon" style="background: ${file.type === 'folder' ? 'linear-gradient(135deg, #fbbf24, #d97706)' : 'linear-gradient(135deg, #60a5fa, #3b82f6)'};">
+                        ${file.type === 'folder' ? '📁' : '📄'}
+                    </div>
+                    <div class="file-info">
+                        <div class="file-name">${file.name}</div>
+                        <div class="file-meta">${file.type === 'folder' ? 'Папка' : file.size} • ${file.modified}</div>
+                    </div>
+                    <button class="file-action-btn" onclick="event.stopPropagation(); showFileContextMenu(${index})">⋮</button>
+                </div>
+            `).join('');
+        }
+
+        function handleFileClick(name, type, index) {
+            if (type === 'folder') {
+                state.currentPath = state.currentPath === '/' ? `/${name}` : `${state.currentPath}/${name}`;
+                renderFileList();
+            } else {
+                openFileViewer(index);
+            }
+        }
+
+        function openFileViewer(index) {
+            const files = state.fileSystem[state.currentPath];
+            const file = files[index];
+            
+            state.currentEditingFile = { index, path: state.currentPath };
+            
+            document.getElementById('fileViewerTitle').textContent = file.name;
+            document.getElementById('fileEditor').value = file.content || '';
+            document.getElementById('fileViewer').classList.add('open');
+        }
+
+        function saveFile() {
+            if (!state.currentEditingFile) return;
+            
+            const { index, path } = state.currentEditingFile;
+            const files = state.fileSystem[path];
+            files[index].content = document.getElementById('fileEditor').value;
+            
+            showToast('Файл сохранён');
+        }
+
+        function closeFileViewer() {
+            document.getElementById('fileViewer').classList.remove('open');
+            state.currentEditingFile = null;
+        }
+
+        function navigateUp() {
+            if (state.currentPath === '/Хранилище') {
+                showToast('Это корневая папка');
+                return;
+            }
+            const parts = state.currentPath.split('/');
+            parts.pop();
+            state.currentPath = parts.join('/') || '/Хранилище';
+            renderFileList();
+        }
+
+        function showCreateFolderModal() {
+            document.getElementById('modalTitle').textContent = 'Новая папка';
+            document.getElementById('modalInput').value = '';
+            document.getElementById('modalInput').placeholder = 'Имя папки...';
+            document.getElementById('modalConfirmBtn').textContent = 'Создать';
+            document.getElementById('modalOverlay').classList.add('open');
+            state.modalCallback = (name) => {
+                if (name) {
+                    if (!state.fileSystem[state.currentPath]) {
+                        state.fileSystem[state.currentPath] = [];
+                    }
+                    state.fileSystem[state.currentPath].push({
+                        name: name,
+                        type: 'folder',
+                        modified: new Date().toLocaleDateString('ru-RU')
+                    });
+                    state.fileSystem[`${state.currentPath}/${name}`] = [];
+                    renderFileList();
+                    showToast('Папка создана');
+                }
+            };
+        }
+
+        function showCreateFileModal() {
+            document.getElementById('modalTitle').textContent = 'Новый файл';
+            document.getElementById('modalInput').value = '';
+            document.getElementById('modalInput').placeholder = 'Имя файла...';
+            document.getElementById('modalConfirmBtn').textContent = 'Создать';
+            document.getElementById('modalOverlay').classList.add('open');
+            state.modalCallback = (name) => {
+                if (name) {
+                    if (!state.fileSystem[state.currentPath]) {
+                        state.fileSystem[state.currentPath] = [];
+                    }
+                    state.fileSystem[state.currentPath].push({
+                        name: name,
+                        type: 'file',
+                        size: '0 КБ',
+                        modified: new Date().toLocaleDateString('ru-RU'),
+                        content: ''
+                    });
+                    renderFileList();
+                    showToast('Файл создан');
+                }
+            };
+        }
+
+        function showFileContextMenu(index) {
+            state.selectedFileItem = index;
+            const menu = document.getElementById('contextMenu');
+            menu.style.left = '50%';
+            menu.style.top = '50%';
+            menu.style.transform = 'translate(-50%, -50%)';
+            menu.classList.add('open');
+        }
+
+        function renameItem() {
+            const files = state.fileSystem[state.currentPath];
+            const file = files[state.selectedFileItem];
+            document.getElementById('modalTitle').textContent = 'Переименовать';
+            document.getElementById('modalInput').value = file.name;
+            document.getElementById('modalConfirmBtn').textContent = 'Сохранить';
+            document.getElementById('modalOverlay').classList.add('open');
+            document.getElementById('contextMenu').classList.remove('open');
+            state.modalCallback = (name) => {
+                if (name && name !== file.name) {
+                    file.name = name;
+                    renderFileList();
+                    showToast('Переименовано');
+                }
+            };
+        }
+
+        function copyItem() {
+            const files = state.fileSystem[state.currentPath];
+            const file = files[state.selectedFileItem];
+            showToast(`Скопировано: ${file.name}`);
+            document.getElementById('contextMenu').classList.remove('open');
+        }
+
+        function deleteItem() {
+            const files = state.fileSystem[state.currentPath];
+            const file = files[state.selectedFileItem];
+            if (file.type === 'folder') {
+                delete state.fileSystem[`${state.currentPath}/${file.name}`];
+            }
+            files.splice(state.selectedFileItem, 1);
+            renderFileList();
+            showToast('Удалено');
+            document.getElementById('contextMenu').classList.remove('open');
+        }
+
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.remove('open');
+            state.modalCallback = null;
+        }
+
+        function confirmModal() {
+            const value = document.getElementById('modalInput').value.trim();
+            if (state.modalCallback) {
+                state.modalCallback(value);
+            }
+            closeModal();
+        }
+
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.context-menu') && !e.target.closest('.file-action-btn')) {
+                document.getElementById('contextMenu').classList.remove('open');
+            }
+        });
+
+        // ===== BROWSER =====
+        function navigateToUrl() {
+            let url = document.getElementById('urlInput').value.trim();
+            if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                url = 'https://' + url;
+            }
+            document.getElementById('browserFrame').src = url;
+        }
+
+        function browserBack() {
+            try { document.getElementById('browserFrame').contentWindow.history.back(); } catch(e) {}
+        }
+
+        function browserForward() {
+            try { document.getElementById('browserFrame').contentWindow.history.forward(); } catch(e) {}
+        }
+
+        function browserRefresh() {
+            const frame = document.getElementById('browserFrame');
+            frame.src = frame.src;
+        }
+
+        function browserHome() {
+            document.getElementById('urlInput').value = 'https://www.google.com';
+            document.getElementById('browserFrame').src = 'https://www.google.com';
+        }
+
+        document.getElementById('urlInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') navigateToUrl();
+        });
+
+        // ===== PHONE DIALER =====
+        function dialPress(num) {
+            state.dialNumber += num;
+            document.getElementById('dialDisplay').textContent = state.dialNumber;
+        }
+
+        function dialClear() {
+            state.dialNumber = state.dialNumber.slice(0, -1);
+            document.getElementById('dialDisplay').textContent = state.dialNumber;
+        }
+
+        // ===== CALCULATOR =====
+        function calcInput(val) {
+            const operators = ['+', '−', '×', '÷', '%'];
+            
+            if (operators.includes(val)) {
+                state.calcExpression = state.calcDisplay + ' ' + val + ' ';
+                state.calcNewNumber = true;
+            } else if (val === '±') {
+                state.calcDisplay = (parseFloat(state.calcDisplay) * -1).toString();
+            } else {
+                if (state.calcNewNumber) {
+                    state.calcDisplay = val === '.' ? '0.' : val;
+                    state.calcNewNumber = false;
+                } else {
+                    if (val === '.' && state.calcDisplay.includes('.')) return;
+                    state.calcDisplay += val;
+                }
+            }
+            
+            document.getElementById('calcDisplay').textContent = state.calcDisplay;
+            document.getElementById('calcExpression').textContent = state.calcExpression;
+        }
+
+        function calcEquals() {
+            try {
+                let expr = state.calcExpression + state.calcDisplay;
+                expr = expr.replace(/×/g, '*').replace(/÷/g, '/').replace(/−/g, '-');
+                const result = eval(expr);
+                state.calcExpression = '';
+                state.calcDisplay = result.toString();
+                state.calcNewNumber = true;
+                document.getElementById('calcDisplay').textContent = state.calcDisplay;
+                document.getElementById('calcExpression').textContent = '';
+            } catch (e) {
+                showToast('Ошибка');
+            }
+        }
+
+        function calcClear() {
+            state.calcDisplay = '0';
+            state.calcExpression = '';
+            state.calcNewNumber = true;
+            document.getElementById('calcDisplay').textContent = '0';
+            document.getElementById('calcExpression').textContent = '';
+        }
+
+        // ===== TOAST =====
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2500);
+        }
+
+        // ===== KEYBOARD =====
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                goHome();
+                closeModal();
+                closeFileViewer();
+            }
+        });
+
+        // ===== INIT =====
+        document.addEventListener('DOMContentLoaded', () => {
+            renderFileList();
+        });
+    </script>
+</body>
+</html>
