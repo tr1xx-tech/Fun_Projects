@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>tr1xx Projects Hub</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #000;
+            --bg-secondary: #0a0a0a;
+            --bg-card: #111;
+            --bg-card-hover: #1a1a1a;
+            --text-primary: #fff;
+            --text-secondary: #888;
+            --text-muted: #555;
+            --border-color: #222;
+            --accent: #fff;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        /* Header */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 1.5rem 3rem;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0) 100%);
+            backdrop-filter: blur(10px);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            color: var(--text-primary);
+        }
+
+        .logo span {
+            color: var(--text-muted);
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Main Content */
+        main {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem 3rem 6rem;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 3rem;
+            flex-wrap: nowrap;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .tabs-divider {
+            width: 1px;
+            height: 24px;
+            background: var(--border-color);
+            margin: 0 1rem;
+        }
+
+        .tabs-group {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: nowrap;
+        }
+
+        .tab-btn {
+            padding: 0.8rem 2rem;
+            background: transparent;
+            border: 1px solid var(--border-color);
+            border-radius: 50px;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tab-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--text-primary);
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: -1;
+        }
+
+        .tab-btn:hover {
+            border-color: var(--text-secondary);
+            color: var(--text-primary);
+        }
+
+        .tab-btn.active {
+            background: var(--text-primary);
+            color: var(--bg-primary);
+            border-color: var(--text-primary);
+        }
+
+        .tab-btn.active::before {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+
+        /* Projects Grid */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        /* Project Card */
+        .project-card {
+            background: var(--bg-card);
+            border-radius: 24px;
+            padding: 2rem;
+            cursor: pointer;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(60px);
+        }
+
+        .project-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .project-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, transparent 50%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .project-card:hover {
+            transform: translateY(-8px);
+            background: var(--bg-card-hover);
+            border-color: var(--text-muted);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+        }
+
+        .project-card:hover::before {
+            opacity: 1;
+        }
+
+        .project-card.visible:hover {
+            transform: translateY(-8px);
+        }
+
+        .card-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .project-card h3 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.5px;
+        }
+
+        .project-card p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(20px);
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background: var(--bg-card);
+            border-radius: 32px;
+            padding: 3rem;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            transform: scale(0.9) translateY(30px);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid var(--border-color);
+        }
+
+        .modal-overlay.active .modal {
+            transform: scale(1) translateY(0);
+        }
+
+        .modal-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--bg-secondary);
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 2rem;
+            font-size: 2rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .modal h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            letter-spacing: -1px;
+        }
+
+        .modal p {
+            color: var(--text-secondary);
+            margin-bottom: 2.5rem;
+        }
+
+        .modal-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .modal-btn {
+            padding: 1rem 2rem;
+            border-radius: 16px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+
+        .modal-btn.primary {
+            background: var(--text-primary);
+            color: var(--bg-primary);
+        }
+
+        .modal-btn.primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(255,255,255,0.2);
+        }
+
+        .modal-btn.secondary {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .modal-btn.secondary:hover {
+            background: var(--border-color);
+            transform: translateY(-2px);
+        }
+
+        .modal-btn.ghost {
+            background: transparent;
+            color: var(--text-secondary);
+        }
+
+        .modal-btn.ghost:hover {
+            color: var(--text-primary);
+        }
+
+        /* Footer */
+        footer {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 2rem;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+        }
+
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 0.5rem;
+        }
+
+        footer span {
+            color: var(--text-secondary);
+        }
+
+        .github-link {
+            color: var(--text-muted);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .github-link:hover {
+            color: var(--text-primary);
+            transform: scale(1.1);
+        }
+
+        /* Loading State */
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 300px;
+        }
+
+        .loader {
+            width: 40px;
+            height: 40px;
+            border: 2px solid var(--border-color);
+            border-top-color: var(--text-primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 4rem;
+            color: var(--text-secondary);
+        }
+
+        /* Category Dividers */
+        .category-divider {
+            grid-column: 1 / -1;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin: 1rem 0;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .category-divider.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .category-divider:first-child {
+            margin-top: 0;
+        }
+
+        .divider-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            letter-spacing: 0.5px;
+        }
+
+        .divider-line {
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(to right, var(--border-color), transparent);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            header {
+                padding: 1rem 1.5rem;
+            }
+
+            main {
+                padding: 1.5rem;
+            }
+
+            .hero {
+                height: 80px;
+            }
+
+            .tabs {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .tabs-divider {
+                width: 80%;
+                height: 1px;
+                margin: 0.5rem 0;
+            }
+
+            .tabs-group {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .footer-content {
+                align-items: center;
+            }
+
+            .projects-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .modal {
+                padding: 2rem;
+            }
+
+            footer {
+                position: static;
+                text-align: center;
+                padding: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <div class="logo">tr1xx Projects Hub</div>
+        </div>
+    </header>
+
+    <section class="hero">
+    </section>
+
+    <main>
+        <div class="tabs">
+            <button class="tab-btn active" data-category="all">Все проекты</button>
+            <div class="tabs-divider"></div>
+            <div class="tabs-group">
+                <button class="tab-btn" data-category="games">Игры</button>
+                <button class="tab-btn" data-category="simulators">Симуляторы</button>
+                <button class="tab-btn" data-category="programs">Программы</button>
+            </div>
+        </div>
+
+        <div id="projects-container" class="projects-grid">
+            <div class="loading">
+                <div class="loader"></div>
+            </div>
+        </div>
+    </main>
+
+    <div class="modal-overlay" id="modal">
+        <div class="modal">
+            <div class="modal-icon" id="modal-icon">🎮</div>
+            <h2 id="modal-title">Project Name</h2>
+            <p id="modal-description">Description</p>
+            <div class="modal-buttons">
+                <a href="#" class="modal-btn primary" id="btn-open" target="_blank">
+                    Открыть
+                </a>
+                <a href="#" class="modal-btn secondary" id="btn-download" download>
+                    Скачать
+                </a>
+                <button class="modal-btn ghost" id="btn-close">
+                    ← Назад
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <p>© 2026 made by <span>tr1xx</span></p>
+            <a href="https://github.com/tr1xx-tech" target="_blank" class="github-link" title="GitHub">
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                    <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                </svg>
+            </a>
+        </div>
+    </footer>
+
+    <script>
+        // State
+        let projects = [];
+        let currentCategory = 'all';
+
+        // DOM Elements
+        const container = document.getElementById('projects-container');
+        const modal = document.getElementById('modal');
+        const tabs = document.querySelectorAll('.tabs .tab-btn, .tabs-group .tab-btn');
+
+        // Category Icons and Names
+        const categoryIcons = {
+            games: '🎮',
+            simulators: '⚛️',
+            programs: '🛠️'
+        };
+
+        const categoryNames = {
+            games: 'Игры',
+            simulators: 'Симуляторы',
+            programs: 'Программы'
+        };
+
+        // Fetch Projects
+        async function fetchProjects() {
+            try {
+                const response = await fetch('projects.json');
+                if (!response.ok) throw new Error('Failed to load');
+                projects = await response.json();
+                renderProjects();
+            } catch (error) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <p>Не удалось загрузить проекты</p>
+                    </div>
+                `;
+                console.error(error);
+            }
+        }
+
+        // Card Template
+        function createCardHTML(project) {
+            const icon = project.icon || categoryIcons[project.category] || '📁';
+            return `
+                <div class="project-card" 
+                     data-file="${project.file}" 
+                     data-name="${project.name}"
+                     data-description="${project.description || ''}"
+                     data-category="${project.category}"
+                     data-icon="${icon}">
+                    <div class="card-icon">${icon}</div>
+                    <h3>${project.name}</h3>
+                    <p>${project.description || 'Нажмите, чтобы узнать больше'}</p>
+                </div>
+            `;
+        }
+
+        // Render Projects
+        function renderProjects() {
+            const filtered = currentCategory === 'all' 
+                ? projects 
+                : projects.filter(p => p.category === currentCategory);
+
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <p>В этой категории пока нет проектов</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // If showing all projects, group by category with dividers
+            if (currentCategory === 'all') {
+                const grouped = {};
+                const categoryOrder = ['games', 'simulators', 'programs'];
+                
+                // Group projects by category
+                filtered.forEach(project => {
+                    if (!grouped[project.category]) {
+                        grouped[project.category] = [];
+                    }
+                    grouped[project.category].push(project);
+                });
+
+                let html = '';
+
+                categoryOrder.forEach(category => {
+                    if (grouped[category] && grouped[category].length > 0) {
+                        // Add divider
+                        html += `
+                            <div class="category-divider">
+                                <span class="divider-text">${categoryNames[category] || category}</span>
+                                <div class="divider-line"></div>
+                            </div>
+                        `;
+
+                        // Add projects using template
+                        grouped[category].forEach(project => {
+                            html += createCardHTML(project);
+                        });
+                    }
+                });
+
+                container.innerHTML = html;
+            } else {
+                // Regular rendering for specific category
+                container.innerHTML = filtered.map(project => createCardHTML(project)).join('');
+            }
+
+            // Initialize Intersection Observer for cards
+            initObserver();
+            
+            // Add click listeners
+            document.querySelectorAll('.project-card').forEach(card => {
+                card.addEventListener('click', () => openModal(card));
+            });
+        }
+
+        // Intersection Observer for scroll animations
+        function initObserver() {
+            const cards = document.querySelectorAll('.project-card');
+            const dividers = document.querySelectorAll('.category-divider');
+            
+            // Observer options - trigger immediately when element enters viewport
+            const observerOptions = {
+                root: null,
+                rootMargin: '50px', // Start animation slightly before element is visible
+                threshold: 0
+            };
+
+            // Observer for cards
+            const cardObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        cardObserver.unobserve(entry.target); // Stop observing once visible
+                    }
+                });
+            }, observerOptions);
+
+            // Observer for dividers
+            const dividerObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        dividerObserver.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            // Observe all cards
+            cards.forEach(card => {
+                cardObserver.observe(card);
+            });
+
+            // Observe all dividers
+            dividers.forEach(divider => {
+                dividerObserver.observe(divider);
+            });
+        }
+
+        // Tab Switching
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                currentCategory = tab.dataset.category;
+                
+                // Animate out
+                container.style.opacity = '0';
+                container.style.transform = 'translateY(20px)';
+                
+                setTimeout(() => {
+                    renderProjects();
+                    container.style.opacity = '1';
+                    container.style.transform = 'translateY(0)';
+                }, 300);
+            });
+        });
+
+        // Add transition to container
+        container.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+
+        // Modal Functions
+        function openModal(card) {
+            const name = card.dataset.name;
+            const file = card.dataset.file;
+            const description = card.dataset.description;
+            const icon = card.dataset.icon;
+
+            document.getElementById('modal-icon').textContent = icon || '📁';
+            document.getElementById('modal-title').textContent = name;
+            document.getElementById('modal-description').textContent = description || 'Интерактивный веб-проект';
+            document.getElementById('btn-open').href = file;
+            document.getElementById('btn-download').href = file;
+            
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // Modal Event Listeners
+        document.getElementById('btn-close').addEventListener('click', closeModal);
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeModal();
+        });
+
+        // Keyboard
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeModal();
+        });
+
+        // Initialize
+        fetchProjects();
+    </script>
+</body>
+</html>
