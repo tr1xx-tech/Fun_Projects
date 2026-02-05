@@ -115,6 +115,541 @@
             transform: translateY(0) scale(1);
             pointer-events: auto;
         }
+        
+        /* Card System (Drop Cards) */
+        :root{
+            --tier1:#cbd5e1;
+            --tier2:#22c55e;
+            --tier3:#38bdf8;
+            --tier4:#c084fc;
+            --tier5:#fbbf24;
+        }
+
+        .line-clamp-3{
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .card-item{
+            position:relative;
+            overflow:hidden;
+            transform-style:preserve-3d;
+            transition: transform 0.22s ease, box-shadow 0.22s ease, filter 0.22s ease;
+            will-change: transform;
+            isolation:isolate;
+        }
+
+        .card-item:hover{
+            transform: translateY(-4px) rotateX(3deg);
+            box-shadow: 0 18px 46px rgba(0,0,0,0.45);
+            filter: saturate(1.10) contrast(1.02);
+        }
+
+        /* bright shine */
+        .card-item::before{
+            content:'';
+            position:absolute;
+            inset:-2px;
+            background: linear-gradient(120deg, rgba(255,255,255,0) 25%, rgba(255,255,255,0.22) 42%, rgba(255,255,255,0) 58%);
+            transform: translateX(-120%) skewX(-12deg);
+            opacity:0;
+            pointer-events:none;
+            z-index:1;
+        }
+        .card-item:hover::before{
+            opacity:1;
+            animation: cardSweep 0.85s ease;
+        }
+        @keyframes cardSweep{
+            0%{ transform: translateX(-120%) skewX(-12deg); opacity:0; }
+            15%{ opacity:1; }
+            100%{ transform: translateX(120%) skewX(-12deg); opacity:0.0; }
+        }
+
+        /* inner border */
+        .card-item::after{
+            content:'';
+            position:absolute;
+            inset:0;
+            border-radius:inherit;
+            pointer-events:none;
+            opacity:0.0;
+            box-shadow: 0 0 0 1px rgba(255,255,255,0.10) inset;
+            transition: opacity 0.22s ease;
+            z-index:2;
+        }
+        .card-item:hover::after{ opacity:1; }
+
+        /* more vivid rarity backgrounds */
+        .card-tier-1{ border-color: rgba(203,213,225,0.65); background: radial-gradient(600px 260px at 20% 0%, rgba(255,255,255,0.12), transparent 55%), linear-gradient(135deg, rgba(100,116,139,0.92) 0%, rgba(15,23,42,0.95) 100%); }
+        .card-tier-2{ border-color: rgba(34,197,94,0.70); background: radial-gradient(600px 260px at 20% 0%, rgba(34,197,94,0.22), transparent 55%), linear-gradient(135deg, rgba(34,197,94,0.45) 0%, rgba(5,46,22,0.96) 100%); }
+        .card-tier-3{ border-color: rgba(56,189,248,0.78); background: radial-gradient(600px 260px at 20% 0%, rgba(56,189,248,0.24), transparent 55%), linear-gradient(135deg, rgba(56,189,248,0.42) 0%, rgba(7,89,133,0.96) 100%); }
+        .card-tier-4{ border-color: rgba(192,132,252,0.78); background: radial-gradient(600px 260px at 20% 0%, rgba(192,132,252,0.26), transparent 55%), linear-gradient(135deg, rgba(192,132,252,0.42) 0%, rgba(59,7,100,0.96) 100%); }
+        .card-tier-5{ border-color: rgba(251,191,36,0.86); background: radial-gradient(600px 260px at 20% 0%, rgba(251,191,36,0.30), transparent 55%), linear-gradient(135deg, rgba(251,191,36,0.50) 0%, rgba(120,53,15,0.96) 100%); }
+
+        /* appear animation (snappier + smoother) */
+        .card-new{ animation: cardPop 0.62s cubic-bezier(.16,.9,.18,1) both; }
+        @keyframes cardPop{
+            0%{ opacity:0; transform: translateY(22px) scale(0.90) rotateX(18deg); filter: blur(3px); }
+            60%{ opacity:1; transform: translateY(-2px) scale(1.02) rotateX(0deg); filter: blur(0px); }
+            100%{ opacity:1; transform: translateY(0px) scale(1) rotateX(0deg); }
+        }
+
+        /* chips */
+        .rarity-chip{
+            display:inline-flex;
+            align-items:center;
+            gap:6px;
+            padding:2px 8px;
+            border-radius:999px;
+            font-size:11px;
+            font-weight:900;
+            background: rgba(255,255,255,0.10);
+            border: 1px solid rgba(255,255,255,0.16);
+            color: rgba(255,255,255,0.92);
+            backdrop-filter: blur(10px);
+        }
+        .qty-chip{
+            display:inline-flex;
+            align-items:center;
+            padding:2px 8px;
+            border-radius:999px;
+            font-size:11px;
+            font-weight:800;
+            background: rgba(0,0,0,0.22);
+            border: 1px solid rgba(255,255,255,0.14);
+            color: rgba(255,255,255,0.92);
+            backdrop-filter: blur(10px);
+        }
+        .comp-chip{
+            display:inline-flex;
+            width: fit-content;
+            max-width: 100%;
+            align-items:center;
+            padding:2px 8px;
+            border-radius:999px;
+            font-size:10px;
+            font-weight:800;
+            background: rgba(0,0,0,0.22);
+            border: 1px solid rgba(255,255,255,0.12);
+            color: rgba(255,255,255,0.88);
+            white-space: normal;
+            overflow: hidden;
+            overflow-wrap: anywhere;
+        }
+
+        .stat-pill{
+            background: rgba(0,0,0,0.20);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 14px;
+            padding: 6px 8px;
+            min-width: 0;
+            overflow: hidden;
+        }
+
+        .comp-chip{
+            display:-webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            align-items:center;
+            padding:2px 8px;
+            border-radius:999px;
+            font-size:10px;
+            font-weight:800;
+            background: rgba(0,0,0,0.22);
+            border: 1px solid rgba(255,255,255,0.12);
+            color: rgba(255,255,255,0.88);
+            max-width: 52%;
+            overflow: hidden;
+            white-space: normal;
+        }
+
+        /* Light theme tweaks for drop cards */
+        .light-theme .card-tier-1{ border-color: rgba(148,163,184,0.55); background: radial-gradient(600px 260px at 20% 0%, rgba(59,130,246,0.10), transparent 58%), linear-gradient(135deg, rgba(241,245,249,0.98) 0%, rgba(226,232,240,0.98) 100%); }
+        .light-theme .card-tier-2{ border-color: rgba(34,197,94,0.55); background: radial-gradient(600px 260px at 20% 0%, rgba(34,197,94,0.10), transparent 58%), linear-gradient(135deg, rgba(220,252,231,0.98) 0%, rgba(187,247,208,0.98) 100%); }
+        .light-theme .card-tier-3{ border-color: rgba(56,189,248,0.60); background: radial-gradient(600px 260px at 20% 0%, rgba(56,189,248,0.12), transparent 58%), linear-gradient(135deg, rgba(224,242,254,0.98) 0%, rgba(186,230,253,0.98) 100%); }
+        .light-theme .card-tier-4{ border-color: rgba(192,132,252,0.60); background: radial-gradient(600px 260px at 20% 0%, rgba(192,132,252,0.12), transparent 58%), linear-gradient(135deg, rgba(243,232,255,0.98) 0%, rgba(233,213,255,0.98) 100%); }
+        .light-theme .card-tier-5{ border-color: rgba(251,191,36,0.65); background: radial-gradient(600px 260px at 20% 0%, rgba(251,191,36,0.14), transparent 58%), linear-gradient(135deg, rgba(255,251,235,0.99) 0%, rgba(254,243,199,0.99) 100%); }
+        .light-theme .rarity-chip,
+        .light-theme .qty-chip,
+        .light-theme .comp-chip{ background: rgba(255,255,255,0.78); border-color: rgba(2,6,23,0.10); color: rgba(15,23,42,0.90); }
+        .light-theme .stat-pill{ background: rgba(255,255,255,0.78); border-color: rgba(2,6,23,0.10); }
+        .light-theme .stat-pill{ background: rgba(255,255,255,0.78); border-color: rgba(2,6,23,0.10); }
+
+        /* Unique / Exclusive marker */
+        .unique-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 2px 8px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 800;
+            background: rgba(251, 191, 36, 0.22);
+            border: 1px solid rgba(251, 191, 36, 0.45);
+            color: rgba(254, 243, 199, 0.98);
+        }
+        .card-exclusive {
+            box-shadow: 0 0 0 1px rgba(251,191,36,0.30) inset, 0 16px 44px rgba(251,191,36,0.12);
+        }
+        .card-exclusive:hover{
+            box-shadow: 0 0 0 1px rgba(251,191,36,0.45) inset, 0 20px 54px rgba(251,191,36,0.20);
+        }
+
+        /* Horizontal drop rows (compact + no overflow) */
+        .drop-row{
+            position:relative;
+            overflow:hidden;
+            border-radius: 16px;
+            border: 1px solid var(--rowBorder, rgba(255,255,255,0.12));
+            background: var(--rowBg, rgba(17,24,39,0.55));
+            backdrop-filter: blur(10px);
+
+            /* title row spans full width, details row has left + price */
+            display:grid;
+            grid-template-columns: minmax(0, 1fr) 112px;
+            grid-template-rows: auto auto;
+            gap: 8px;
+            padding: 10px;
+
+            transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease, filter 0.18s ease;
+            box-shadow: 0 14px 32px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.05) inset;
+        }
+
+        .drop-row .left-col{ max-width: calc(100% - 0px); }
+
+        .drop-row .left-col{
+            min-width:0;
+            position:relative;
+            z-index:2;
+            display:flex;
+            flex-direction:column;
+            gap:6px;
+            grid-column: 1 / 2;
+            grid-row: 2 / 3;
+        }
+
+        .drop-row .titleline{
+            display:flex;
+            flex-wrap: nowrap;
+            align-items:center;
+            gap:8px;
+            min-width:0;
+            grid-column: 1 / -1;
+            grid-row: 1 / 2;
+            overflow-x: auto;
+        }
+        .drop-row .titleline::-webkit-scrollbar{ height: 0; }
+
+        .drop-row::before{
+            content:'';
+            position:absolute;
+            inset:-2px;
+            background: radial-gradient(600px 260px at 20% 10%, rgba(255,255,255,0.18), transparent 55%);
+            opacity: 0.55;
+            pointer-events:none;
+        }
+        .drop-row:hover{
+            transform: translateY(-2px);
+            box-shadow: 0 18px 44px rgba(0,0,0,0.42), 0 0 0 1px rgba(255,255,255,0.08) inset, var(--rowGlow, 0 0 0 rgba(0,0,0,0));
+            filter: saturate(1.08) contrast(1.02);
+        }
+
+        .drop-row .tier-strip{ display:none; }
+
+        .drop-row .value-box{
+            width: 104px;
+            max-width: 104px;
+            justify-self: end;
+
+            text-align: center;
+            padding: 8px 8px;
+            border-radius: 12px;
+            background: rgba(0,0,0,0.22);
+            border: 1px solid rgba(255,255,255,0.14);
+            position: relative;
+            z-index: 2;
+            align-self: center;
+            margin-top: 0;
+
+            display:flex;
+            flex-direction:column;
+            gap: 6px;
+            grid-column: 2 / 3;
+            grid-row: 2 / 3;
+        }
+        .drop-row .comp-chip{
+            max-width: 100%;
+            -webkit-line-clamp: 2;
+        }
+
+        .drop-row .value-price{
+            font-weight: 950;
+            font-size: 12.5px;
+            line-height: 1.1;
+            color: rgba(253, 224, 71, 0.95);
+            text-shadow: 0 8px 20px rgba(0,0,0,0.35);
+        }
+
+        .drop-row .value-sub{
+            font-size: 10px;
+            color: rgba(255,255,255,0.75);
+        }
+
+        .drop-row .sell-btn{
+            width: 100%;
+            font-size: 11px;
+            font-weight: 950;
+            padding: 6px 8px;
+            border-radius: 10px;
+        }
+
+        .drop-row .title{
+            flex: 1 1 auto;
+            min-width: 0;
+            max-width: 100%;
+            font-weight: 900;
+            font-size: 12px;
+            line-height: 1.2;
+            white-space: nowrap;
+            overflow-x: auto;
+            overflow-y: hidden;
+            text-overflow: unset;
+        }
+        .drop-row .title::-webkit-scrollbar{ height: 0; }
+
+        .drop-row .chips{
+            display:flex;
+            flex-wrap:wrap;
+            gap: 5px;
+            min-width: 0;
+        }
+        .drop-row .chips > *{ min-width: 0; }
+
+        .drop-row .stats{
+            display:flex;
+            flex-wrap:wrap;
+            gap: 6px;
+            min-width: 0;
+            font-size: 11px;
+        }
+        .drop-row .stat{
+            display:flex;
+            align-items:center;
+            justify-content: space-between;
+            gap: 8px;
+            padding: 4px 8px;
+            border-radius: 999px;
+            background: rgba(0,0,0,0.20);
+            border: 1px solid rgba(255,255,255,0.12);
+            color: rgba(255,255,255,0.92);
+            min-width: 0;
+        }
+        .drop-row .stat span:first-child{ color: rgba(255,255,255,0.72); }
+        .drop-row .stat span:last-child{ font-weight: 900; }
+
+        .drop-row .stat-row{
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .drop-row .stat-pill{
+            display: inline-flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 6px;
+            padding: 4px 8px;
+            border-radius: 999px;
+            font-size: 11px;
+            background: rgba(0,0,0,0.20);
+            border: 1px solid rgba(255,255,255,0.12);
+            align-self: flex-start;
+            width: fit-content;
+        }
+
+
+        @media (max-width: 520px){
+            .drop-row{
+                grid-template-columns: minmax(0, 1fr) 112px;
+                grid-template-rows: auto auto;
+                gap: 8px;
+            }
+            .drop-row .value-box{
+                justify-self: end;
+                width: 112px;
+                max-width: 112px;
+                grid-row: 2 / 3;
+            }
+        }
+
+        /* Make the whole row bright by rarity (reuse the old vivid palette) */
+        .drop-tier-1{ 
+            --tierColor: var(--tier1);
+            --rowBorder: rgba(203,213,225,0.45);
+            --rowGlow: 0 0 28px rgba(203,213,225,0.10);
+            --rowBg: radial-gradient(900px 360px at 18% 0%, rgba(255,255,255,0.10), transparent 55%),
+                     linear-gradient(135deg, rgba(100,116,139,0.85) 0%, rgba(15,23,42,0.96) 100%);
+        }
+        .drop-tier-2{ 
+            --tierColor: var(--tier2);
+            --rowBorder: rgba(34,197,94,0.55);
+            --rowGlow: 0 0 34px rgba(34,197,94,0.18);
+            --rowBg: radial-gradient(900px 360px at 18% 0%, rgba(34,197,94,0.20), transparent 55%),
+                     linear-gradient(135deg, rgba(34,197,94,0.42) 0%, rgba(5,46,22,0.96) 100%);
+        }
+        .drop-tier-3{ 
+            --tierColor: var(--tier3);
+            --rowBorder: rgba(56,189,248,0.60);
+            --rowGlow: 0 0 38px rgba(56,189,248,0.20);
+            --rowBg: radial-gradient(900px 360px at 18% 0%, rgba(56,189,248,0.22), transparent 55%),
+                     linear-gradient(135deg, rgba(56,189,248,0.38) 0%, rgba(7,89,133,0.96) 100%);
+        }
+        .drop-tier-4{ 
+            --tierColor: var(--tier4);
+            --rowBorder: rgba(192,132,252,0.62);
+            --rowGlow: 0 0 42px rgba(192,132,252,0.22);
+            --rowBg: radial-gradient(900px 360px at 18% 0%, rgba(192,132,252,0.22), transparent 55%),
+                     linear-gradient(135deg, rgba(192,132,252,0.40) 0%, rgba(59,7,100,0.96) 100%);
+        }
+        .drop-tier-5{ 
+            --tierColor: var(--tier5);
+            --rowBorder: rgba(251,191,36,0.70);
+            --rowGlow: 0 0 54px rgba(251,191,36,0.22);
+            --rowBg: radial-gradient(900px 360px at 18% 0%, rgba(251,191,36,0.26), transparent 55%),
+                     linear-gradient(135deg, rgba(251,191,36,0.44) 0%, rgba(120,53,15,0.96) 100%);
+        }
+
+        .drop-row-exclusive{
+            border-color: rgba(251,191,36,0.75);
+            box-shadow: 0 18px 44px rgba(0,0,0,0.42), 0 0 0 1px rgba(251,191,36,0.22) inset, 0 0 58px rgba(251,191,36,0.18);
+        }
+
+        .drop-row-new{ animation: dropRowIn 0.45s cubic-bezier(.16,.9,.18,1) both; }
+        @keyframes dropRowIn{
+            0%{ opacity:0; transform: translateY(10px); filter: blur(2px); }
+            100%{ opacity:1; transform: translateY(0px); filter: blur(0px); }
+        }
+
+        .light-theme .drop-row{
+            background: rgba(255,255,255,0.92);
+            border-color: rgba(2,6,23,0.10);
+            box-shadow: 0 12px 30px rgba(2,6,23,0.10);
+        }
+        .light-theme .drop-row .value-box{
+            background: rgba(2,6,23,0.04);
+            border-color: rgba(2,6,23,0.10);
+        }
+
+        /* Home hero card */
+        .home-hero {
+            border: 1px solid rgba(255,255,255,0.10);
+        }
+
+        .category-btn {
+            transition: all 0.2s ease;
+        }
+        .category-btn.selected {
+            ring: 2px;
+            ring-color: #3b82f6;
+            transform: scale(1.05);
+        }
+
+        /* Theme */
+        .light-theme {
+            /* мягкий, “чистый” фон с лёгким голубым оттенком */
+            background: radial-gradient(1200px 600px at 20% 0%, rgba(59,130,246,0.14), transparent 55%),
+                        radial-gradient(900px 500px at 100% 10%, rgba(168,85,247,0.12), transparent 60%),
+                        linear-gradient(135deg, #f8fafc 0%, #eff6ff 45%, #ecfeff 100%) !important;
+            color: #0f172a;
+        }
+
+        /* базовые “поверхности” */
+        .light-theme .surface {
+            background: rgba(255,255,255,0.92) !important;
+            border: 1px solid rgba(2, 6, 23, 0.10);
+            box-shadow: 0 12px 30px rgba(2, 6, 23, 0.10);
+        }
+
+        /* текст */
+        .light-theme .text-white { color: #0f172a !important; }
+        .light-theme .text-gray-400 { color: rgba(15, 23, 42, 0.68) !important; }
+        .light-theme .text-gray-500 { color: rgba(15, 23, 42, 0.58) !important; }
+        .light-theme .text-gray-300 { color: rgba(15, 23, 42, 0.78) !important; }
+        .light-theme .text-blue-300 { color: rgba(37, 99, 235, 0.80) !important; }
+
+        /* замены “серых” блоков Tailwind на светлые карточки */
+        .light-theme .bg-gray-700\/50 {
+            background-color: rgba(255, 255, 255, 0.70) !important;
+            border: 1px solid rgba(2, 6, 23, 0.08);
+        }
+        .light-theme .bg-gray-800\/50 {
+            background-color: rgba(255, 255, 255, 0.78) !important;
+            border: 1px solid rgba(2, 6, 23, 0.08);
+        }
+        .light-theme .bg-gray-700 {
+            background-color: rgba(2, 6, 23, 0.06) !important;
+        }
+        .light-theme .bg-gray-800 {
+            background-color: rgba(255, 255, 255, 0.88) !important;
+            border: 1px solid rgba(2, 6, 23, 0.10);
+        }
+        .light-theme .bg-gray-900 {
+            background-color: rgba(255, 255, 255, 0.96) !important;
+            border: 1px solid rgba(2, 6, 23, 0.10);
+        }
+        .light-theme .bg-gray-900\/95 {
+            background-color: rgba(255, 255, 255, 0.96) !important;
+        }
+
+        .light-theme .border-gray-700\/50 { border-color: rgba(2, 6, 23, 0.12) !important; }
+        .light-theme .border-gray-700 { border-color: rgba(2, 6, 23, 0.14) !important; }
+
+        /* выпадающие меню (кастомные селекты) */
+        .light-theme .comp-menu,
+        .light-theme .build-select-menu,
+        .light-theme .factory-select-menu {
+            background: rgba(255,255,255,0.98) !important;
+            border-color: rgba(2, 6, 23, 0.12) !important;
+            box-shadow: 0 18px 40px rgba(2, 6, 23, 0.14);
+        }
+        .light-theme .comp-option:hover,
+        .light-theme .build-select-menu button:hover,
+        .light-theme .factory-select-menu button:hover {
+            background: rgba(37, 99, 235, 0.08) !important;
+        }
+
+        /* инпуты */
+        .light-theme input,
+        .light-theme textarea {
+            color: #0f172a;
+        }
+        .light-theme input::placeholder,
+        .light-theme textarea::placeholder {
+            color: rgba(15, 23, 42, 0.45);
+        }
+
+        /* range */
+        .light-theme input[type="range"] { background: rgba(2, 6, 23, 0.12); }
+        .light-theme input[type="range"]::-webkit-slider-thumb { background: #2563eb; }
+
+        /* скролл */
+        .light-theme ::-webkit-scrollbar-track { background: rgba(2, 6, 23, 0.06); }
+        .light-theme ::-webkit-scrollbar-thumb { background: rgba(37, 99, 235, 0.70); }
+
+        /* tier-карточки в светлой теме — более мягкие */
+        .light-theme .card-tier-1 { border-color: #94a3b8; background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%); }
+        .light-theme .card-tier-2 { border-color: #22c55e; background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%); }
+        .light-theme .card-tier-3 { border-color: #3b82f6; background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); }
+        .light-theme .card-tier-4 { border-color: #a855f7; background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%); }
+        .light-theme .card-tier-5 { border-color: #f59e0b; background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%); }
+
+        /* чтобы “синие/фиолетовые” градиентные кнопки читались */
+        .light-theme .btn-action { box-shadow: none; }
+        .light-theme .btn-action:hover { box-shadow: 0 10px 24px rgba(2,6,23,0.12); }
     </style>
 </head>
 <body class="telegram-bg min-h-screen text-white">
@@ -138,18 +673,20 @@
 
     <div class="container mx-auto max-w-6xl p-4 overflow-x-hidden">
         <!-- Header -->
-        <header class="bg-gray-900/80 rounded-2xl p-3 mb-4 flex flex-col gap-2">
+        <header class="bg-gray-900/80 surface rounded-2xl p-3 mb-4 flex flex-col gap-2">
             <div class="flex items-center justify-between gap-2 min-w-0">
                 <div class="flex items-center gap-2 min-w-0">
-                    <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-xl glow flex-shrink-0">🏭</div>
+                    <div id="appLogo" class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-xl glow flex-shrink-0 cursor-pointer select-none" title="Tech Empire">🏭</div>
                     <div class="min-w-0">
                         <h1 class="text-lg font-bold whitespace-nowrap">Tech Empire</h1>
                         <p class="text-gray-400 text-xs truncate max-w-[160px]" id="companyName">Создайте компанию</p>
                     </div>
                 </div>
-                <div id="headerStats" class="hidden text-right">
-                    <div class="text-green-400 font-bold text-sm" id="moneyDisplay">$100,000</div>
-                    <div class="text-gray-400 text-xs">День: <span id="dayDisplay">1</span></div>
+
+                <!-- Money / Day (returned to header) -->
+                <div id="headerStats" class="hidden text-right flex-shrink-0">
+                    <div class="text-green-400 font-bold text-sm" id="moneyDisplay">$0</div>
+                    <div class="text-gray-400 text-[11px]">День: <span class="font-bold" id="dayDisplay">1</span></div>
                 </div>
             </div>
             <div id="headerActions" class="hidden flex items-center justify-between gap-2">
@@ -163,38 +700,16 @@
             </div>
         </header>
 
-        <!-- Stats Bar -->
-        <div class="bg-gray-900/60 rounded-xl p-2 mb-4 grid grid-cols-5 gap-1 text-center" id="statsBar" style="display: none;">
-            <div class="bg-gray-800/50 rounded-lg p-1.5 min-w-0">
-                <div class="text-yellow-400 text-xs font-bold truncate">⭐<span id="reputationDisplay">50</span></div>
-                <div class="text-gray-500 text-[10px] truncate">Репутация</div>
-            </div>
-            <div class="bg-gray-800/50 rounded-lg p-1.5 min-w-0">
-                <div class="text-blue-400 text-xs font-bold truncate">📦<span id="productsDisplay">0</span></div>
-                <div class="text-gray-500 text-[10px] truncate">Товары</div>
-            </div>
-            <div class="bg-gray-800/50 rounded-lg p-1.5 min-w-0">
-                <div class="text-purple-400 text-xs font-bold truncate">👥<span id="employeesDisplay">0</span></div>
-                <div class="text-gray-500 text-[10px] truncate">Персонал</div>
-            </div>
-            <div class="bg-gray-800/50 rounded-lg p-1.5 min-w-0">
-                <div class="text-cyan-400 text-xs font-bold truncate">🔧<span id="componentsDisplay">0</span></div>
-                <div class="text-gray-500 text-[10px] truncate">Детали</div>
-            </div>
-            <div class="bg-gray-800/50 rounded-lg p-1.5 min-w-0">
-                <div class="text-green-400 text-xs font-bold truncate">📈<span id="levelDisplay">1</span></div>
-                <div class="text-gray-500 text-[10px] truncate">Уровень</div>
-            </div>
-        </div>
+        <!-- Stats Bar moved to Home tab -->
 
         <!-- Main Content -->
-        <div class="bg-gray-900/60 rounded-2xl p-4 min-h-[500px]" id="mainContent">
+        <div class="bg-gray-900/60 surface rounded-2xl p-4 min-h-[500px]" id="mainContent">
             <!-- Welcome Screen -->
             <div id="welcomeScreen" class="text-center py-10">
                 <div class="text-6xl mb-4">🚀</div>
                 <h2 class="text-3xl font-bold mb-2">Добро пожаловать в Tech Empire!</h2>
                 <p class="text-gray-400 mb-6">Создайте свою технологическую империю</p>
-                <button onclick="showCreateCompany()" class="btn-action bg-gradient-to-r from-blue-500 to-purple-600 px-8 py-3 rounded-xl font-bold text-lg">
+                <button onclick="showCreateCompany()" class="btn-action bg-gradient-to-r from-blue-500 to-purple-600 px-8 py-3 rounded-xl font-bold text-lg mb-3">
                     🏢 Создать компанию
                 </button>
             </div>
@@ -217,21 +732,25 @@
             <!-- Main Game Screen -->
             <div id="gameScreen" class="hidden">
                 <div class="tab-bar flex flex-nowrap gap-1.5 mb-4 border-b border-gray-700 pb-3">
-                    <button onclick="showTab('production')" class="tab-btn btn-action bg-blue-600 px-2 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap flex items-center" data-tab="production" data-label="Производство"><span class="tab-icon">🏗️</span><span class="tab-label">Производство</span></button>
+                    <button onclick="showTab('home')" class="tab-btn btn-action bg-blue-600 px-2 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap flex items-center" data-tab="home" data-label="Главная"><span class="tab-icon">🏠</span><span class="tab-label">Главная</span></button>
+                    <button onclick="showTab('production')" class="tab-btn btn-action bg-gray-700 px-2 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap flex items-center" data-tab="production" data-label="Производство"><span class="tab-icon">🏭</span><span class="tab-label">Производство</span></button>
                     <button onclick="showTab('components')" class="tab-btn btn-action bg-gray-700 px-2 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap flex items-center" data-tab="components" data-label="Компоненты"><span class="tab-icon">🧩</span><span class="tab-label">Компоненты</span></button>
-                    <button onclick="showTab('factory')" class="tab-btn btn-action bg-gray-700 px-2 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap flex items-center" data-tab="factory" data-label="Фабрика"><span class="tab-icon">🏢</span><span class="tab-label">Фабрика</span></button>
-                    <button onclick="showTab('repair')" class="tab-btn btn-action bg-gray-700 px-2 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap flex items-center" data-tab="repair" data-label="Ремонт"><span class="tab-icon">🛠️</span><span class="tab-label">Ремонт</span></button>
-                    <button onclick="showTab('contracts')" class="tab-btn btn-action bg-gray-700 px-2 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap flex items-center" data-tab="contracts" data-label="Контракты"><span class="tab-icon">📝</span><span class="tab-label">Контракты</span></button>
-                    <button onclick="showTab('rnd')" class="tab-btn btn-action bg-gray-700 px-2 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap flex items-center" data-tab="rnd" data-label="Исследования"><span class="tab-icon">🧪</span><span class="tab-label">Исследования</span></button>
-                    <button onclick="showTab('marketing')" class="tab-btn btn-action bg-gray-700 px-2 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap flex items-center" data-tab="marketing" data-label="Маркетинг"><span class="tab-icon">📣</span><span class="tab-label">Маркетинг</span></button>
-                    <button onclick="showTab('staff')" class="tab-btn btn-action bg-gray-700 px-2 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap flex items-center" data-tab="staff" data-label="Персонал"><span class="tab-icon">🧑‍💼</span><span class="tab-label">Персонал</span></button>
-                    <button onclick="showTab('market')" class="tab-btn btn-action bg-gray-700 px-2 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap flex items-center" data-tab="market" data-label="Продажи"><span class="tab-icon">💸</span><span class="tab-label">Продажи</span></button>
-                    <button onclick="showTab('warehouse')" class="tab-btn btn-action bg-gray-700 px-2 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap flex items-center" data-tab="warehouse" data-label="Склад"><span class="tab-icon">🧰</span><span class="tab-label">Склад</span></button>
-                    <button onclick="showTab('settings')" class="tab-btn btn-action bg-gray-700 px-2 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap flex items-center" data-tab="settings" data-label="Настройки"><span class="tab-icon">🛡️</span><span class="tab-label">Настройки</span></button>
+                    <button onclick="showTab('factory')" class="tab-btn btn-action bg-gray-700 px-2 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap flex items-center" data-tab="factory" data-label="Фабрика"><span class="tab-icon">⚙️</span><span class="tab-label">Фабрика</span></button>
+                    <button onclick="showTab('repair')" class="tab-btn btn-action bg-gray-700 px-2 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap flex items-center" data-tab="repair" data-label="Ремонт"><span class="tab-icon">🔧</span><span class="tab-label">Ремонт</span></button>
+                    <button onclick="showTab('contracts')" class="tab-btn btn-action bg-gray-700 px-2 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap flex items-center" data-tab="contracts" data-label="Контракты"><span class="tab-icon">📜</span><span class="tab-label">Контракты</span></button>
+                    <button onclick="showTab('rnd')" class="tab-btn btn-action bg-gray-700 px-2 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap flex items-center" data-tab="rnd" data-label="Исследования"><span class="tab-icon">🔬</span><span class="tab-label">Исследования</span></button>
+                    <button onclick="showTab('marketing')" class="tab-btn btn-action bg-gray-700 px-2 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap flex items-center" data-tab="marketing" data-label="Маркетинг"><span class="tab-icon">📢</span><span class="tab-label">Маркетинг</span></button>
+                    <button onclick="showTab('staff')" class="tab-btn btn-action bg-gray-700 px-2 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap flex items-center" data-tab="staff" data-label="Персонал"><span class="tab-icon">👥</span><span class="tab-label">Персонал</span></button>
+                    <button onclick="showTab('market')" class="tab-btn btn-action bg-gray-700 px-2 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap flex items-center" data-tab="market" data-label="Продажи"><span class="tab-icon">🛒</span><span class="tab-label">Продажи</span></button>
+                    <button onclick="showTab('warehouse')" class="tab-btn btn-action bg-gray-700 px-2 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap flex items-center" data-tab="warehouse" data-label="Склад"><span class="tab-icon">📦</span><span class="tab-label">Склад</span></button>
+                    <button onclick="showTab('meta')" class="tab-btn btn-action bg-gray-700 px-2 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap flex items-center" data-tab="meta" data-label="Статистика"><span class="tab-icon">📈</span><span class="tab-label">Статистика</span></button>
+                    <button onclick="showTab('buyouts')" class="tab-btn btn-action bg-gray-700 px-2 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap flex items-center" data-tab="buyouts" data-label="Выкуп"><span class="tab-icon">🤝</span><span class="tab-label">Выкуп</span></button>
+                    <button onclick="showTab('settings')" class="tab-btn btn-action bg-gray-700 px-2 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap flex items-center" data-tab="settings" data-label="Настройки"><span class="tab-icon">⚙️</span><span class="tab-label">Настройки</span></button>
                 </div>
                 <div id="tabContent" class="slide-in"></div>
             </div>
         </div>
+
     </div>
 
     <!-- Modal -->
@@ -291,8 +810,519 @@
             productionCapacity: 10000,
             totalSales: 0,
             totalProduced: 0,
-            totalRepaired: 0
+            totalRepaired: 0,
+            // Card System
+            lastCardClaim: 0,
+            cardCollection: [],
+            selectedCardCategory: 'smartphone',
+            // Dev / Settings
+            devMenuUnlocked: false,
+            devSkipCardCooldown: false,
+            darkTheme: true,
+
+            // Meta systems: quests/achievements/market/reviews/events
+            unlockedAchievements: [],
+            dailyQuests: [],
+            weeklyQuests: [],
+            lastQuestDay: 0,
+            lastQuestWeek: 0,
+            reviews: [],
+            avgRating: 3.5,
+            reviewCount: 0,
+            newsLog: [],
+            priceModifiers: [], // active effects/events (daysLeft-based)
+            cardsReceivedTotal: 0,
+            totalUnitsSold: 0,
+            investorDeal: null,
+            market: {
+                yourShare: 10,
+                competitors: []
+            }
         };
+
+        // ==================== DEV MENU (LOGO CLICKS) ====================
+        let __devClickCount = 0;
+        let __devClickTimer = null;
+        function initDevLogo() {
+            const logo = document.getElementById('appLogo');
+            if (!logo) return;
+            logo.addEventListener('click', () => {
+                __devClickCount++;
+                clearTimeout(__devClickTimer);
+                __devClickTimer = setTimeout(() => { __devClickCount = 0; }, 1600);
+
+                if (__devClickCount >= 10) {
+                    __devClickCount = 0;
+                    if (!gameState.devMenuUnlocked) {
+                        gameState.devMenuUnlocked = true;
+                        saveGame();
+                        notify('🛠️ Меню разработчика разблокировано (вкладка «Главная»)!', 'success');
+                        const activeTab = document.querySelector('.tab-btn.bg-blue-600');
+                        if (activeTab?.dataset.tab === 'home') renderHome();
+                    } else {
+                        notify('🛠️ Меню разработчика уже разблокировано', 'info');
+                    }
+                }
+            });
+        }
+
+        function devGrantMoney(amount = 1000000) {
+            const add = Number(amount || 0);
+            if (!Number.isFinite(add) || add <= 0) return;
+            gameState.money += add;
+            updateUI();
+            notify(`🧪 Dev: +${formatMoney(add)}`, 'success');
+        }
+
+        function devToggleSkipCardCooldown(isOn) {
+            gameState.devSkipCardCooldown = !!isOn;
+            saveGame();
+            updateCardUI();
+            notify(`🧪 Dev: пропуск ожидания карточек ${gameState.devSkipCardCooldown ? 'ВКЛ' : 'ВЫКЛ'}`, 'info');
+        }
+        
+        // ==================== CARD DROP SYSTEM ====================
+        const CARD_DROP_INTERVAL = 60 * 60 * 1000; // 1 hour in milliseconds
+        const CARDS_PER_DROP = 3;
+        
+        const CARD_CATEGORIES = {
+            smartphone: { name: '📱 Смартфоны', icon: '📱', components: ['processor_mobile', 'display_mobile', 'battery_mobile', 'camera_main', 'camera_ultra', 'camera_tele', 'camera_front', 'memory_mobile', 'body_mobile', 'sensors', 'modem'] },
+            tablet: { name: '📲 Планшеты', icon: '📲', components: ['processor_mobile', 'display_tablet', 'battery_tablet', 'camera_main', 'camera_ultra', 'camera_front', 'memory_mobile', 'body_tablet', 'sensors', 'speakers'] },
+            laptop: { name: '💻 Ноутбуки', icon: '💻', components: ['processor_desktop', 'gpu', 'display_laptop', 'battery_laptop', 'memory_desktop', 'storage', 'body_laptop', 'keyboard', 'touchpad', 'webcam'] },
+            desktop: { name: '🖥️ ПК', icon: '🖥️', components: ['processor_desktop', 'gpu', 'motherboard', 'memory_desktop', 'storage', 'psu', 'cooling', 'case'] },
+            smartwatch: { name: '⌚ Часы', icon: '⌚', components: ['processor_wearable', 'display_watch', 'battery_watch', 'sensors_watch', 'body_watch', 'strap'] },
+            headphones: { name: '🎧 Наушники', icon: '🎧', components: ['drivers', 'battery_headphones', 'bluetooth', 'body_headphones', 'cushions', 'microphone'] },
+            tv: { name: '📺 ТВ', icon: '📺', components: ['display_tv', 'processor_tv', 'speakers_tv', 'smart_module', 'body_tv', 'stand'] },
+            console: { name: '🎮 Консоли', icon: '🎮', components: ['processor_console', 'gpu_console', 'memory_console', 'storage_console', 'body_console', 'cooling_console', 'controller'] },
+            refrigerator: { name: '🧊 Холодильники', icon: '🧊', components: ['compressor', 'motor', 'controls_appliance', 'body_appliance', 'insulation', 'shelves'] },
+            washer: { name: '🧺 Стиралки', icon: '🧺', components: ['motor_washer', 'drum', 'controls_appliance', 'body_appliance', 'pump', 'heater'] },
+            aircon: { name: '❄️ Кондиционеры', icon: '❄️', components: ['compressor_ac', 'fan', 'controls_appliance', 'body_appliance', 'filter', 'refrigerant'] },
+            vacuum: { name: '🧹 Пылесосы', icon: '🧹', components: ['motor_vacuum', 'battery_vacuum', 'filter_vacuum', 'body_vacuum', 'brush', 'sensors_vacuum'] }
+        };
+        
+        function getTierName(tier) {
+            const names = { 1: 'Обычный', 2: 'Необычный', 3: 'Редкий', 4: 'Эпический', 5: 'Легендарный' };
+            return names[Number(tier) || 1] || 'Обычный';
+        }
+
+        function stripTierPrefix(name) {
+            // Remove legacy rarity prefixes if they exist in a string.
+            return String(name || '').replace(/^(Common|Uncommon|Rare|Epic|Legendary|Обычный|Необычный|Редкий|Эпический|Легендарный)\s+/i, '');
+        }
+        
+        function getTierColor(tier) {
+            const colors = { 1: 'gray', 2: 'green', 3: 'blue', 4: 'purple', 5: 'yellow' };
+            return colors[tier] || 'gray';
+        }
+        
+        function canClaimCards() {
+            if (gameState.devSkipCardCooldown) return true;
+            const now = Date.now();
+            const lastClaim = gameState.lastCardClaim || 0;
+            return (now - lastClaim) >= CARD_DROP_INTERVAL;
+        }
+        
+        function getTimeUntilNextClaim() {
+            if (gameState.devSkipCardCooldown) return 0;
+            const now = Date.now();
+            const lastClaim = gameState.lastCardClaim || 0;
+            const timeSinceClaim = now - lastClaim;
+            const timeRemaining = CARD_DROP_INTERVAL - timeSinceClaim;
+            return Math.max(0, timeRemaining);
+        }
+        
+        function formatTimeRemaining(ms) {
+            if (ms <= 0) return 'Доступно!';
+            const minutes = Math.floor(ms / 60000);
+            const seconds = Math.floor((ms % 60000) / 1000);
+            return `${minutes}м ${seconds}с`;
+        }
+        
+        function generateRandomCard(category) {
+            const cat = CARD_CATEGORIES[category];
+            if (!cat) return null;
+            
+            // Pick random component type from category
+            const compType = cat.components[Math.floor(Math.random() * cat.components.length)];
+            const compData = COMPONENTS[compType];
+            if (!compData || !compData.items) return null;
+            
+            // Limit card tier by unlocked tech tier
+            const maxAllowedTier = Math.max(1, Math.min(5, getMaxTier()));
+            const tierWeights = { 1: 0.45, 2: 0.30, 3: 0.15, 4: 0.07, 5: 0.03 };
+            const allowedTiers = [];
+            let totalW = 0;
+            for (let t = 1; t <= maxAllowedTier; t++) { allowedTiers.push(t); totalW += (tierWeights[t] || 0); }
+
+            let roll = Math.random() * totalW;
+            let tier = allowedTiers[0] || 1;
+            for (const t of allowedTiers) {
+                roll -= (tierWeights[t] || 0);
+                if (roll <= 0) { tier = t; break; }
+            }
+            
+            // Get items of this tier
+            const tierItems = compData.items.filter(item => item.tier === tier);
+            if (tierItems.length === 0) {
+                // Fallback to any available item
+                const item = compData.items[Math.floor(Math.random() * compData.items.length)];
+                return createCard(compType, item);
+            }
+            
+            const item = tierItems[Math.floor(Math.random() * tierItems.length)];
+            return createCard(compType, item, { allowExclusive: true });
+        }
+        
+        function rollCardQty(tier) {
+            const t = Number(tier || 1);
+            const min = 100;
+            const maxByTier = { 1: 1200, 2: 900, 3: 650, 4: 420, 5: 260 };
+            const powByTier = { 1: 0.85, 2: 1.15, 3: 1.8, 4: 2.6, 5: 3.4 };
+            const max = maxByTier[t] || 600;
+            const pow = powByTier[t] || 1.6;
+
+            // Чем выше tier, тем больше степень => тем ближе r к 0 => тем меньше партия в среднем.
+            const r = Math.pow(Math.random(), pow);
+            const raw = min + Math.round((max - min) * r);
+
+            // Округляем до удобных чисел
+            const step = t >= 4 ? 5 : 10;
+            return Math.max(min, Math.round(raw / step) * step);
+        }
+
+        function randomSerial() {
+            const letters = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
+            const a = letters[Math.floor(Math.random() * letters.length)];
+            const b = letters[Math.floor(Math.random() * letters.length)];
+            const n = Math.floor(100 + Math.random() * 900);
+            return `${a}${b}-${n}`;
+        }
+
+        function generateExclusiveComponentName(compType, item, tier) {
+            const groups = {
+                processor_mobile: { a: ['Orion', 'Astra', 'Nova', 'Quantum', 'Neuro', 'Hyper'], b: ['Core', 'SoC', 'Silicon', 'Engine'], c: ['X', 'Pro', 'Ultra', 'Max'] },
+                processor_desktop: { a: ['Titan', 'Vortex', 'Astra', 'Neutron', 'Forge'], b: ['Core', 'Compute', 'Die', 'Chiplet'], c: ['Z', 'X', 'Prime', 'Extreme'] },
+                gpu: { a: ['Photon', 'Nebula', 'Spectra', 'Apex'], b: ['Graphics', 'Render', 'Vision'], c: ['GT', 'RTX', 'VX', 'Nova'] },
+                display_mobile: { a: ['Crystal', 'Infinity', 'Aurora', 'Prism'], b: ['Panel', 'Vision', 'Display'], c: ['Pro', 'Plus', 'XDR', 'Edge'] },
+                display_tablet: { a: ['Nova', 'Aurora', 'Lumen', 'Vivid'], b: ['Panel', 'Screen', 'Display'], c: ['Pro', 'Plus', 'XDR', 'Edge'] },
+                display_laptop: { a: ['Quantum', 'Zen', 'Spectra', 'Infinity'], b: ['Panel', 'Vision', 'Display'], c: ['Pro', 'Ultra', 'Max'] },
+                display_tv: { a: ['Cine', 'Crystal', 'Lumina', 'Vivid'], b: ['Panel', 'Screen', 'Vision'], c: ['Pro', 'Max', 'XDR'] },
+                display_watch: { a: ['Nano', 'Pulse', 'Vivid', 'Aurora'], b: ['Display', 'Panel', 'Screen'], c: ['Pro', 'Edge', 'X'] },
+                battery_mobile: { a: ['PowerCell', 'Volt', 'Energy', 'Ion'], b: ['Pack', 'Stack', 'Core'], c: ['Ultra', 'Max', 'Prime'] },
+                battery_tablet: { a: ['Volt', 'Energy', 'Core', 'Nova'], b: ['Pack', 'Cell', 'Stack'], c: ['Plus', 'Max', 'Prime'] },
+                battery_laptop: { a: ['Power', 'Ion', 'Quantum', 'Atlas'], b: ['Pack', 'Battery', 'Core'], c: ['Pro', 'Ultra', 'Max'] },
+                battery_watch: { a: ['Pulse', 'Nano', 'Ion', 'Spark'], b: ['Cell', 'Pack', 'Core'], c: ['Mini', 'Pro', 'X'] },
+                battery_headphones: { a: ['Echo', 'Volt', 'Pulse', 'Ion'], b: ['Cell', 'Pack', 'Core'], c: ['Pro', 'Max', 'X'] },
+                battery_vacuum: { a: ['Turbo', 'Volt', 'Drive', 'Ion'], b: ['Pack', 'Core', 'Cell'], c: ['Pro', 'Ultra', 'Max'] },
+                camera_main: { a: ['Opti', 'Photon', 'Ultra', 'Neo'], b: ['Lens', 'Sensor', 'Vision'], c: ['Pro', 'Elite', 'Master'] },
+                camera_ultra: { a: ['Wide', 'Ultra', 'Aero', 'Neo'], b: ['Lens', 'Sensor', 'Vision'], c: ['Pro', 'X', 'Edge'] },
+                camera_tele: { a: ['Zoom', 'Tele', 'Apex', 'Neo'], b: ['Lens', 'Sensor', 'Vision'], c: ['Pro', 'X', 'Prime'] },
+                camera_front: { a: ['Selfie', 'Neo', 'Aura', 'View'], b: ['Lens', 'Sensor', 'Vision'], c: ['Pro', 'X', 'Plus'] },
+                sensors: { a: ['Sense', 'Vita', 'Pulse', 'Core'], b: ['Hub', 'Suite', 'Pack'], c: ['Pro', 'X', 'Plus'] },
+                modem: { a: ['Link', 'Wave', 'Connect', 'Aero'], b: ['Modem', 'Radio', 'Core'], c: ['Pro', 'X', 'Plus'] },
+                memory_mobile: { a: ['Turbo', 'Speed', 'Flash', 'Quantum'], b: ['Mem', 'RAM', 'Vault'], c: ['X', 'Pro', 'Ultra'] },
+                memory_desktop: { a: ['Ultra', 'Titan', 'Speed', 'Quantum'], b: ['RAM', 'Mem', 'Vault'], c: ['X', 'Pro', 'Max'] },
+                memory_console: { a: ['Giga', 'Speed', 'Rapid', 'Neo'], b: ['RAM', 'Mem', 'Core'], c: ['Pro', 'X', 'Plus'] },
+                storage: { a: ['Flash', 'Data', 'Quantum', 'Hyper'], b: ['SSD', 'Drive', 'Vault'], c: ['Pro', 'X', 'Ultra'] },
+                motherboard: { a: ['Prime', 'Apex', 'Core', 'Fusion'], b: ['Board', 'Base', 'Hub'], c: ['X', 'Pro', 'Max'] },
+                psu: { a: ['Power', 'Titan', 'Volt', 'Core'], b: ['Unit', 'Supply', 'Core'], c: ['Gold', 'Pro', 'Max'] },
+                cooling: { a: ['Frost', 'Chill', 'Glacier', 'Aero'], b: ['Cooler', 'Loop', 'Core'], c: ['Pro', 'X', 'Max'] },
+                case: { a: ['Steel', 'Titan', 'Nova', 'Apex'], b: ['Case', 'Tower', 'Shell'], c: ['Pro', 'X', 'Max'] },
+                body_mobile: { a: ['Neo', 'Aero', 'Edge', 'Prime'], b: ['Body', 'Frame', 'Shell'], c: ['Pro', 'X', 'Max'] },
+                body_tablet: { a: ['Neo', 'Edge', 'Prime', 'Aura'], b: ['Body', 'Frame', 'Shell'], c: ['Pro', 'X', 'Max'] },
+                body_laptop: { a: ['Nova', 'Edge', 'Prime', 'Aero'], b: ['Body', 'Frame', 'Shell'], c: ['Pro', 'X', 'Max'] },
+                body_watch: { a: ['Nano', 'Edge', 'Prime', 'Aura'], b: ['Body', 'Frame', 'Shell'], c: ['Pro', 'X', 'Max'] },
+                body_headphones: { a: ['Echo', 'Aero', 'Prime', 'Aura'], b: ['Body', 'Shell', 'Frame'], c: ['Pro', 'X', 'Max'] },
+                body_tv: { a: ['Cine', 'Edge', 'Prime', 'Aura'], b: ['Body', 'Frame', 'Shell'], c: ['Pro', 'X', 'Max'] },
+                body_console: { a: ['Neo', 'Edge', 'Prime', 'Apex'], b: ['Body', 'Shell', 'Frame'], c: ['Pro', 'X', 'Max'] },
+                body_appliance: { a: ['Steel', 'Prime', 'Aura', 'Core'], b: ['Body', 'Frame', 'Shell'], c: ['Pro', 'X', 'Max'] },
+                body_vacuum: { a: ['Nova', 'Prime', 'Aura', 'Core'], b: ['Body', 'Shell', 'Frame'], c: ['Pro', 'X', 'Max'] },
+                processor_console: { a: ['Orion', 'Apex', 'Nova', 'Core'], b: ['SoC', 'Engine', 'Chip'], c: ['Pro', 'X', 'Max'] },
+                gpu_console: { a: ['Photon', 'Apex', 'Nova', 'Spectra'], b: ['GPU', 'Core', 'Render'], c: ['Pro', 'X', 'Max'] },
+                processor_tv: { a: ['Vision', 'Neuro', 'Apex', 'Core'], b: ['Chip', 'Core', 'Engine'], c: ['Pro', 'X', 'Max'] },
+                processor_wearable: { a: ['Pulse', 'Nano', 'Apex', 'Core'], b: ['SoC', 'Core', 'Engine'], c: ['Pro', 'X', 'Max'] },
+                smart_module: { a: ['Smart', 'Neo', 'Aero', 'Prime'], b: ['Module', 'Core', 'Hub'], c: ['Pro', 'X', 'Max'] },
+                speakers_tv: { a: ['Sonic', 'Audio', 'Echo', 'Prime'], b: ['Sound', 'Speaker', 'Audio'], c: ['Pro', 'X', 'Max'] },
+                drivers: { a: ['Echo', 'Sonic', 'Pulse', 'Prime'], b: ['Driver', 'Speaker', 'Audio'], c: ['Pro', 'X', 'Max'] },
+                bluetooth: { a: ['Wave', 'Link', 'Pulse', 'Prime'], b: ['BT', 'Module', 'Core'], c: ['Pro', 'X', 'Max'] },
+                controller: { a: ['Nova', 'Pulse', 'Prime', 'Edge'], b: ['Pad', 'Controller', 'Core'], c: ['Pro', 'X', 'Max'] },
+                cooling_console: { a: ['Frost', 'Chill', 'Aero', 'Core'], b: ['Cooler', 'Loop', 'Core'], c: ['Pro', 'X', 'Max'] },
+                compressor: { a: ['Cool', 'Frost', 'Prime', 'Core'], b: ['Compressor', 'Unit', 'Core'], c: ['Pro', 'X', 'Max'] },
+                motor: { a: ['Drive', 'Prime', 'Core', 'Aero'], b: ['Motor', 'Unit', 'Core'], c: ['Pro', 'X', 'Max'] },
+                controls_appliance: { a: ['Control', 'Smart', 'Prime', 'Core'], b: ['Panel', 'Module', 'Core'], c: ['Pro', 'X', 'Max'] },
+                insulation: { a: ['Thermo', 'Prime', 'Core', 'Aura'], b: ['Layer', 'Pack', 'Core'], c: ['Pro', 'X', 'Max'] },
+                shelves: { a: ['Clear', 'Prime', 'Aura', 'Core'], b: ['Shelf', 'Rack', 'Core'], c: ['Pro', 'X', 'Max'] },
+                motor_washer: { a: ['Spin', 'Prime', 'Core', 'Drive'], b: ['Motor', 'Unit', 'Core'], c: ['Pro', 'X', 'Max'] },
+                drum: { a: ['Spin', 'Prime', 'Core', 'Steel'], b: ['Drum', 'Unit', 'Core'], c: ['Pro', 'X', 'Max'] },
+                pump: { a: ['Flow', 'Prime', 'Core', 'Aqua'], b: ['Pump', 'Unit', 'Core'], c: ['Pro', 'X', 'Max'] },
+                heater: { a: ['Heat', 'Prime', 'Core', 'Thermo'], b: ['Heater', 'Unit', 'Core'], c: ['Pro', 'X', 'Max'] },
+                compressor_ac: { a: ['Cool', 'Prime', 'Core', 'Aero'], b: ['Compressor', 'Unit', 'Core'], c: ['Pro', 'X', 'Max'] },
+                fan: { a: ['Aero', 'Prime', 'Core', 'Wind'], b: ['Fan', 'Unit', 'Core'], c: ['Pro', 'X', 'Max'] },
+                filter: { a: ['Pure', 'Prime', 'Core', 'Air'], b: ['Filter', 'Unit', 'Core'], c: ['Pro', 'X', 'Max'] },
+                refrigerant: { a: ['Cool', 'Prime', 'Core', 'R'], b: ['Gas', 'Unit', 'Core'], c: ['Pro', 'X', 'Max'] },
+                motor_vacuum: { a: ['Turbo', 'Prime', 'Core', 'Drive'], b: ['Motor', 'Unit', 'Core'], c: ['Pro', 'X', 'Max'] },
+                filter_vacuum: { a: ['Pure', 'Prime', 'Core', 'HEPA'], b: ['Filter', 'Unit', 'Core'], c: ['Pro', 'X', 'Max'] },
+                brush: { a: ['Clean', 'Prime', 'Core', 'Sweep'], b: ['Brush', 'Unit', 'Core'], c: ['Pro', 'X', 'Max'] },
+                sensors_vacuum: { a: ['Sense', 'Prime', 'Core', 'Scan'], b: ['Sensor', 'Unit', 'Core'], c: ['Pro', 'X', 'Max'] },
+                strap: { a: ['Strap', 'Prime', 'Core', 'Band'], b: ['Band', 'Loop', 'Core'], c: ['Pro', 'X', 'Max'] },
+                webcam: { a: ['Vision', 'Prime', 'Core', 'Cam'], b: ['Cam', 'Lens', 'Core'], c: ['Pro', 'X', 'Max'] },
+                keyboard: { a: ['Key', 'Prime', 'Core', 'Type'], b: ['Board', 'Keys', 'Core'], c: ['Pro', 'X', 'Max'] },
+                touchpad: { a: ['Touch', 'Prime', 'Core', 'Pad'], b: ['Pad', 'Surface', 'Core'], c: ['Pro', 'X', 'Max'] },
+                speakers: { a: ['Audio', 'Prime', 'Core', 'Sound'], b: ['Speaker', 'Audio', 'Core'], c: ['Pro', 'X', 'Max'] },
+                body_console: { a: ['Neo', 'Prime', 'Core', 'Shell'], b: ['Body', 'Shell', 'Core'], c: ['Pro', 'X', 'Max'] }
+            };
+            const g = groups[compType] || { a: ['Custom', 'Exclusive', 'Limited'], b: ['Module', 'Unit', 'Part'], c: ['X', 'Pro', 'Ultra'] };
+            const A = g.a[Math.floor(Math.random() * g.a.length)];
+            const B = g.b[Math.floor(Math.random() * g.b.length)];
+            const C = g.c[Math.floor(Math.random() * g.c.length)];
+            const t = Number(tier || item?.tier || 1);
+            const serial = randomSerial();
+            // No tier words in the name; tier is shown on the card UI separately.
+            return `${A} ${B} ${C}${t} (${serial})`;
+        }
+
+        function shouldDropExclusiveCard(tier) {
+            // Exclusive parts (unique cards) should drop noticeably more often, but still feel special.
+            // Slightly more likely on higher tiers.
+            const t = Number(tier || 1);
+            const base = 0.08; // 8%
+            const extra = t >= 4 ? 0.07 : t === 3 ? 0.04 : t === 2 ? 0.02 : 0;
+            return Math.random() < (base + extra);
+        }
+
+        function isMarketComponentName(compType, name) {
+            const items = COMPONENTS[compType]?.items || [];
+            const target = normalizeCompName(name);
+            return items.some(it => normalizeCompName(it.name) === target);
+        }
+
+        function createCard(compType, item, opts = {}) {
+            const tier = Number(item?.tier || 1);
+            const qty = rollCardQty(tier);
+
+            const forceExclusive = !!opts.forceExclusive;
+            const exclusiveAllowed = opts.allowExclusive !== false;
+            const exclusive = (forceExclusive || shouldDropExclusiveCard(tier)) && exclusiveAllowed;
+
+            let name = item.name;
+            let quality = Number(item.quality || 0);
+            let unitPrice = Math.max(1, Math.round(Number(item.price || 0)));
+
+            if (exclusive) {
+                name = generateExclusiveComponentName(compType, item, tier);
+                // Make exclusives slightly better than their base item.
+                quality = Math.round(quality + 2 + tier * 2 + Math.random() * 4);
+                const rarityMult = { 1: 1.15, 2: 1.35, 3: 1.6, 4: 2.0, 5: 2.6 }[tier] || 1.2;
+                unitPrice = Math.max(1, Math.round(Number(item.price || 0) * rarityMult));
+            }
+
+            const value = Math.max(1, Math.round(unitPrice * qty));
+
+            return {
+                id: Date.now() + Math.random(),
+                compType,
+                name,
+                baseName: item.name,
+                unitPrice,
+                qty,
+                value,
+                quality,
+                tier,
+                exclusive,
+                claimedAt: Date.now(),
+                source: 'card'
+            };
+        }
+        
+        function claimCards() {
+            if (!canClaimCards()) {
+                notify('⏰ Карточки ещё не доступны!', 'warning');
+                return;
+            }
+            
+            const category = gameState.selectedCardCategory || 'smartphone';
+            const newCards = [];
+            
+            for (let i = 0; i < CARDS_PER_DROP; i++) {
+                const card = generateRandomCard(category);
+                if (card) {
+                    newCards.push(card);
+
+                    // Auto-send parts to warehouse (strip tier prefix for storage name)
+                    addInventory(card.compType, stripTierPrefix(card.name), Number(card.qty || 1));
+
+                    // Register as a custom component so it appears in selectors.
+                    // Only exclusives should become separate selectable SKUs. Otherwise we'd duplicate market items.
+                    if (!gameState.customComponents) gameState.customComponents = [];
+                    if (card.exclusive) {
+                        gameState.customComponents.push({
+                            id: Date.now() + Math.random(),
+                            compType: card.compType,
+                            // keep unique card name as-is, but without tier words
+                            name: stripTierPrefix(card.name),
+                            price: Math.max(1, Math.round(Number(card.unitPrice || card.price || 1) * 0.95)),
+                            quality: card.quality,
+                            tier: card.tier,
+                            custom: true,
+                            internal: true,
+                            source: 'card_exclusive'
+                        });
+                    }
+                }
+            }
+
+            // Track total cards received (for achievements)
+            gameState.cardsReceivedTotal = Number(gameState.cardsReceivedTotal || 0) + newCards.length;
+            
+            // Only set cooldown if not skipping
+            if (!gameState.devSkipCardCooldown) {
+                gameState.lastCardClaim = Date.now();
+            }
+            saveGame();
+            
+            // Show results
+            displayDroppedCards(newCards);
+            updateCardUI();
+            
+            notify(`🎴 Получено ${newCards.length} карточек!`, 'success');
+        }
+        
+        function displayDroppedCards(cards) {
+            const resultsDiv = document.getElementById('cardDropResults');
+            const grid = document.getElementById('droppedCardsGrid');
+            if (!resultsDiv || !grid) return;
+
+            resultsDiv.classList.remove('hidden');
+
+            grid.innerHTML = cards.map((card, i) => {
+                const compLabel = COMPONENTS[card.compType]?.name || card.compType;
+                const qty = Number(card.qty || 1);
+                const unit = Number(card.unitPrice || card.price || 0);
+                const value = Number(card.value || Math.round(unit * qty) || 0);
+                const stockName = stripTierPrefix(card.name);
+
+                return `
+                <div class="drop-row drop-tier-${card.tier} ${card.exclusive ? 'drop-row-exclusive' : ''} drop-row-new" style="animation-delay:${i * 0.08}s">
+                    <div class="tier-strip" aria-hidden="true"></div>
+
+                    <div class="titleline" title="${escapeAttr(card.name)}">
+                        <div class="title">${escapeHtml(card.name)}</div>
+                        <span class="rarity-chip flex-shrink-0">${escapeHtml(getTierName(card.tier))}</span>
+                    </div>
+
+                    <div class="left-col">
+                        <div class="stat-row">
+                            <span class="qty-chip">x${qty.toLocaleString()}</span>
+                            <span class="stat-pill"><span class="text-gray-400">Q</span> <span class="font-bold">${Number(card.quality || 0)}</span></span>
+                            ${card.exclusive ? '<span class="unique-pill">✨ Уникальный</span>' : ''}
+                        </div>
+
+                        <span class="comp-chip" title="${escapeAttr(compLabel)}">${escapeHtml(compLabel)}</span>
+
+                        <span class="stat-pill">
+                            <span class="text-gray-400">Цена/шт</span>
+                            <span class="font-bold">${formatMoney(Math.max(0, Math.round(unit)))}</span>
+                        </span>
+                    </div>
+
+                    <div class="value-box">
+                        <div class="value-sub">Партия</div>
+                        <div class="value-price">${formatMoney(value)}</div>
+                        <button type="button"
+                            data-comp-type="${escapeAttr(card.compType)}"
+                            data-name="${escapeAttr(stockName)}"
+                            data-qty="${qty}"
+                            data-unit="${Math.max(0, Math.round(unit))}"
+                            onclick="sellDroppedBatchFromEl(this)"
+                            class="btn-action sell-btn bg-red-600/85 hover:bg-red-600">
+                            Продать
+                        </button>
+                    </div>
+                </div>
+                `;
+            }).join('');
+        }
+        
+        function updateCardUI() {
+            updateCardTimer();
+            updateCategoryGrid();
+            updateClaimButton();
+        }
+        
+        function updateCardTimer() {
+            const timerDiv = document.getElementById('cardDropTimer');
+            if (!timerDiv) return;
+            
+            const timeRemaining = getTimeUntilNextClaim();
+            if (timeRemaining <= 0) {
+                timerDiv.innerHTML = '<span class="text-green-400 font-bold">✅ Карточки доступны!</span>';
+            } else {
+                timerDiv.innerHTML = `<span class="text-yellow-400">⏰ Следующие карточки через: <span class="font-bold">${formatTimeRemaining(timeRemaining)}</span></span>`;
+            }
+        }
+        
+        function updateCategoryGrid() {
+            const grid = document.getElementById('cardCategoryGrid');
+            if (!grid) return;
+            
+            grid.innerHTML = Object.entries(CARD_CATEGORIES).map(([key, cat]) => {
+                const isSelected = gameState.selectedCardCategory === key;
+                return `
+                    <button onclick="selectCardCategory('${key}')" 
+                        class="category-btn ${isSelected ? 'ring-2 ring-blue-500 bg-blue-600/30' : 'bg-gray-700/50'} 
+                        p-2 rounded-lg text-center hover:bg-gray-600/50 transition-all">
+                        <div class="text-2xl mb-1">${cat.icon}</div>
+                        <div class="text-[10px] truncate">${cat.name.split(' ')[1] || cat.name}</div>
+                    </button>
+                `;
+            }).join('');
+        }
+        
+        function selectCardCategory(category) {
+            gameState.selectedCardCategory = category;
+            saveGame();
+            updateCategoryGrid();
+        }
+        
+        // Cards no longer have a collection UI: they are auto-sent to warehouse.
+        function updateCollectionDisplay() { /* no-op */ }
+        
+        function updateClaimButton() {
+            const btn = document.getElementById('claimCardsBtn');
+            if (!btn) return;
+            
+            const canClaim = canClaimCards();
+            btn.disabled = !canClaim;
+            btn.classList.toggle('opacity-50', !canClaim);
+            btn.classList.toggle('cursor-not-allowed', !canClaim);
+        }
+        
+        // Start card timer update loop
+        let cardTimerInterval = null;
+        function startCardTimer() {
+            if (cardTimerInterval) clearInterval(cardTimerInterval);
+            cardTimerInterval = setInterval(() => {
+                updateCardTimer();
+                updateClaimButton();
+            }, 1000);
+        }
+
+        // ==================== CARD ACTIONS (USE / SELL) ====================
+        // Cards are auto-sent to warehouse now.
+        function findCardIndexById(cardId) {
+            const idNum = Number(cardId);
+            return (gameState.cardCollection || []).findIndex(c => Number(c.id) === idNum);
+        }
+
+        // Deprecated (kept for backward compatibility)
+        function useCard(cardId) {
+            notify('🎴 Карточки теперь автоматически отправляются на склад.', 'info');
+        }
+
+        // Deprecated (kept for backward compatibility)
+        function sellCard(cardId) {
+            notify('🎴 Карточки теперь автоматически отправляются на склад.', 'info');
+        }
 
         const STAFF_LIMITS = {
             engineers: 12,
@@ -1394,35 +2424,960 @@
         const RESEARCH_TREE = [
             { id: 'fast_production', name: 'Оптимизация производства', cost: 25000, seconds: 8, effect: 'Скорость +20%', unlockTier: 1 },
             { id: 'quality_control', name: 'Контроль качества', cost: 35000, seconds: 12, effect: 'Качество +10%', unlockTier: 1 },
-            { id: 'tier2_unlock', name: 'Компоненты Tier 2', cost: 150000, seconds: 20, effect: 'Доступ к Tier 2', unlockTier: 1 },
+            { id: 'tier2_unlock', name: 'Компоненты: Необычные', cost: 150000, seconds: 20, effect: 'Доступ к Необычным', unlockTier: 1 },
             { id: 'component_factory', name: 'Фабрика компонентов', cost: 1500000, seconds: 60, effect: 'Свои компоненты', unlockTier: 1 },
-            { id: 'tier3_unlock', name: 'Компоненты Tier 3', cost: 400000, seconds: 30, effect: 'Доступ к Tier 3', unlockTier: 2 },
+            { id: 'tier3_unlock', name: 'Компоненты: Редкие', cost: 400000, seconds: 30, effect: 'Доступ к Редким', unlockTier: 2 },
             { id: 'mass_production', name: 'Массовое производство', cost: 300000, seconds: 25, effect: 'Capacity +100%', unlockTier: 2 },
-            { id: 'tier4_unlock', name: 'Компоненты Tier 4', cost: 800000, seconds: 40, effect: 'Доступ к Tier 4', unlockTier: 3 },
+            { id: 'tier4_unlock', name: 'Компоненты: Эпические', cost: 800000, seconds: 40, effect: 'Доступ к Эпическим', unlockTier: 3 },
             { id: 'automation', name: 'Роботизация', cost: 600000, seconds: 35, effect: 'Расходы -25%', unlockTier: 3 },
-            { id: 'tier5_unlock', name: 'Компоненты Tier 5', cost: 1500000, seconds: 55, effect: 'Доступ к Tier 5', unlockTier: 4 }
+            { id: 'tier5_unlock', name: 'Компоненты: Легендарные', cost: 1500000, seconds: 55, effect: 'Доступ к Легендарным', unlockTier: 4 }
         ];
+
+        // ==================== META: ACHIEVEMENTS / QUESTS / MARKET / REVIEWS / EVENTS ====================
+        const ACHIEVEMENTS = [
+            { id: 'first_product', name: 'Первый шаг', desc: 'Создать первый продукт', reward: { money: 5000 } },
+            { id: 'produce_1000', name: 'Массовое производство', desc: 'Произвести 1,000 устройств', reward: { money: 20000 } },
+            { id: 'sales_1m', name: 'Магнат', desc: 'Заработать $1,000,000 на продажах', reward: { money: 50000 } },
+            { id: 'repair_50', name: 'Ремонтная мастерская', desc: 'Отремонтировать 50 устройств', reward: { money: 15000 } },
+            { id: 'all_tiers', name: 'Исследователь', desc: 'Открыть все редкости', reward: { uniqueComponent: true } },
+            { id: 'collect_100_cards', name: 'Коллекционер', desc: 'Получить 100 карточек', reward: { rareCard: 5 } },
+            { id: 'factory_lvl5', name: 'Промышленник', desc: 'Улучшить фабрику до уровня 5', reward: { money: 100000 } },
+            { id: 'brand_80', name: 'Бренд', desc: 'Достичь узнаваемости 80%', reward: { reputation: 10 } },
+            { id: 'staff_20', name: 'Империя', desc: 'Нанять 20+ сотрудников', reward: { money: 30000 } }
+        ];
+
+        const DAILY_QUEST_TEMPLATES = [
+            { id: 'd_sell_100', name: 'Продать 100 устройств', type: 'sell_units', target: 100, rewardMoney: 5000 },
+            { id: 'd_repair_5', name: 'Отремонтировать 5 устройств', type: 'repair_units', target: 5, rewardMoney: 4000 },
+            { id: 'd_produce_500', name: 'Произвести 500 устройств', type: 'produce_units', target: 500, rewardMoney: 7000 }
+        ];
+
+        const WEEKLY_QUEST_TEMPLATES = [
+            { id: 'w_earn_500k', name: 'Заработать $500,000', type: 'earn_money', target: 500000, rewardMoney: 25000 },
+            { id: 'w_sign_3', name: 'Подписать 3 контракта', type: 'sign_contracts', target: 3, rewardMoney: 20000 },
+            { id: 'w_campaign_5', name: 'Запустить 5 кампаний', type: 'start_campaigns', target: 5, rewardMoney: 22000 }
+        ];
+
+        const COMPETITOR_DEFS = [
+            {
+                id: 'apple',
+                name: 'Apple',
+                legal: 'Apple Inc.',
+                strategy: 'premium',
+                share: 20,
+                hq: 'Купертино, США',
+                founded: 1976,
+                ceo: 'Tim Cook',
+                tagline: 'Премиум‑экосистема и флагманы'
+            },
+            {
+                id: 'samsung',
+                name: 'Samsung',
+                legal: 'Samsung Electronics Co., Ltd.',
+                strategy: 'premium',
+                share: 18,
+                hq: 'Сеул, Южная Корея',
+                founded: 1969,
+                ceo: 'Jong‑Hee Han',
+                tagline: 'Флагманы и инновации массового рынка'
+            },
+            {
+                id: 'xiaomi',
+                name: 'Xiaomi',
+                legal: 'Xiaomi Corporation',
+                strategy: 'budget',
+                share: 8,
+                hq: 'Пекин, Китай',
+                founded: 2010,
+                ceo: 'Lei Jun',
+                tagline: 'Лучшее соотношение цены и качества'
+            },
+            {
+                id: 'huawei',
+                name: 'Huawei',
+                legal: 'Huawei Technologies Co., Ltd.',
+                strategy: 'premium',
+                share: 7,
+                hq: 'Шэньчжэнь, Китай',
+                founded: 1987,
+                ceo: 'Ren Zhengfei',
+                tagline: 'Инфраструктура и премиум‑устройства'
+            },
+            {
+                id: 'oppo',
+                name: 'OPPO',
+                legal: 'Guangdong OPPO Mobile Telecommunications',
+                strategy: 'mid',
+                share: 6,
+                hq: 'Дунгуань, Китай',
+                founded: 2004,
+                ceo: 'Pete Lau',
+                tagline: 'Стильные устройства среднего сегмента'
+            },
+            {
+                id: 'vivo',
+                name: 'vivo',
+                legal: 'vivo Communication Technology Co., Ltd.',
+                strategy: 'mid',
+                share: 6,
+                hq: 'Дунгуань, Китай',
+                founded: 2009,
+                ceo: 'Shen Wei',
+                tagline: 'Массовый рынок и камеры'
+            },
+            {
+                id: 'lenovo',
+                name: 'Lenovo',
+                legal: 'Lenovo Group Limited',
+                strategy: 'mid',
+                share: 5,
+                hq: 'Пекин, Китай',
+                founded: 1984,
+                ceo: 'Yang Yuanqing',
+                tagline: 'ПК и ноутбуки для бизнеса'
+            },
+            {
+                id: 'hp',
+                name: 'HP',
+                legal: 'HP Inc.',
+                strategy: 'mid',
+                share: 5,
+                hq: 'Пало‑Альто, США',
+                founded: 1939,
+                ceo: 'Enrique Lores',
+                tagline: 'Надёжные ПК и принтеры'
+            },
+            {
+                id: 'dell',
+                name: 'Dell',
+                legal: 'Dell Technologies Inc.',
+                strategy: 'mid',
+                share: 5,
+                hq: 'Раунд‑Рок, США',
+                founded: 1984,
+                ceo: 'Michael Dell',
+                tagline: 'Бизнес‑линейки и сервис'
+            },
+            {
+                id: 'sony',
+                name: 'Sony',
+                legal: 'Sony Group Corporation',
+                strategy: 'premium',
+                share: 4,
+                hq: 'Токио, Япония',
+                founded: 1946,
+                ceo: 'Kenichiro Yoshida',
+                tagline: 'Медиа‑экосистема и электроника'
+            },
+            {
+                id: 'lg',
+                name: 'LG',
+                legal: 'LG Electronics Inc.',
+                strategy: 'mid',
+                share: 4,
+                hq: 'Сеул, Южная Корея',
+                founded: 1958,
+                ceo: 'William Cho',
+                tagline: 'Бытовая техника и дисплеи'
+            },
+            {
+                id: 'asus',
+                name: 'ASUS',
+                legal: 'ASUSTeK Computer Inc.',
+                strategy: 'mid',
+                share: 4,
+                hq: 'Тайбэй, Тайвань',
+                founded: 1989,
+                ceo: 'Samson Hu',
+                tagline: 'ПК, ноутбуки и гейминг'
+            }
+        ];
+
+        function initCompetitorsIfNeeded() {
+            if (!gameState.market) gameState.market = { yourShare: 1, competitors: [] };
+            if (!Array.isArray(gameState.market.competitors) || gameState.market.competitors.length === 0) {
+                const totalShare = 99;
+                const weightSum = COMPETITOR_DEFS.reduce((sum, c) => sum + (c.share || 1), 0) || 1;
+                gameState.market.competitors = COMPETITOR_DEFS.map(c => ({
+                    id: c.id,
+                    name: c.name,
+                    legal: c.legal,
+                    hq: c.hq,
+                    founded: c.founded,
+                    ceo: c.ceo,
+                    tagline: c.tagline,
+                    strategy: c.strategy,
+                    share: Math.max(1, Math.round(totalShare * ((c.share || 1) / weightSum))),
+                    strength: c.strategy === 'premium' ? 70 : c.strategy === 'budget' ? 45 : c.strategy === 'mid' ? 55 : 30,
+                    priceIndex: c.strategy === 'premium' ? 1.35 : c.strategy === 'budget' ? 0.85 : c.strategy === 'mid' ? 1.05 : 0.95,
+                    innovation: c.strategy === 'premium' ? 55 : c.strategy === 'budget' ? 25 : c.strategy === 'mid' ? 45 : 35,
+                    cash: 2000000 + Math.floor(Math.random() * 6000000),
+                    cashFloor: 2000000
+                }));
+
+                // Your share starts at 1%
+                gameState.market.yourShare = 1;
+
+                // Normalize sum to 100
+                let sum = gameState.market.yourShare + gameState.market.competitors.reduce((a, b) => a + (b.share || 0), 0);
+                const diff = 100 - sum;
+                if (diff !== 0 && gameState.market.competitors[0]) {
+                    gameState.market.competitors[0].share = Math.max(1, gameState.market.competitors[0].share + diff);
+                }
+            }
+        }
+
+        function getDayOfWeekIndex(day) {
+            // Day 1 -> week 1, dayOfWeek 1
+            return ((Number(day || 1) - 1) % 7) + 1;
+        }
+
+        function getWeekIndex(day) {
+            return Math.floor((Number(day || 1) - 1) / 7) + 1;
+        }
+
+        function ensureQuests() {
+            if (!Array.isArray(gameState.dailyQuests)) gameState.dailyQuests = [];
+            if (!Array.isArray(gameState.weeklyQuests)) gameState.weeklyQuests = [];
+
+            // Daily quests: regenerate once per in-game day
+            if (gameState.lastQuestDay !== gameState.day) {
+                gameState.dailyQuests = DAILY_QUEST_TEMPLATES.map(q => ({ ...q, progress: 0, completed: false, claimed: false }));
+                gameState.lastQuestDay = gameState.day;
+            }
+
+            // Weekly quests: regenerate once per week
+            const w = getWeekIndex(gameState.day);
+            if (gameState.lastQuestWeek !== w) {
+                gameState.weeklyQuests = WEEKLY_QUEST_TEMPLATES.map(q => ({ ...q, progress: 0, completed: false, claimed: false }));
+                gameState.lastQuestWeek = w;
+            }
+        }
+
+        function addNews(text, type = 'info') {
+            if (!Array.isArray(gameState.newsLog)) gameState.newsLog = [];
+            gameState.newsLog.unshift({ id: Date.now() + Math.random(), day: gameState.day, text, type });
+            if (gameState.newsLog.length > 30) gameState.newsLog.pop();
+        }
+
+        function applyTimedEffectsTick() {
+            // Called on nextDay to decrease daysLeft on effects
+            if (!Array.isArray(gameState.priceModifiers)) gameState.priceModifiers = [];
+            gameState.priceModifiers = gameState.priceModifiers.filter(e => {
+                e.daysLeft = (Number(e.daysLeft || 0) - 1);
+                return e.daysLeft > 0;
+            });
+        }
+
+        function getSalesSpeedMultiplierFromRating() {
+            const r = Number(gameState.avgRating || 3.5);
+            if (r >= 4.6) return 1.35;
+            if (r >= 4.2) return 1.20;
+            if (r >= 3.6) return 1.05;
+            if (r >= 3.0) return 0.90;
+            if (r >= 2.3) return 0.75;
+            return 0.60;
+        }
+
+        function getActiveEffectMultiplier(kind) {
+            // kind: 'sales', 'component_prices'
+            const effects = Array.isArray(gameState.priceModifiers) ? gameState.priceModifiers : [];
+            let mult = 1;
+            effects.forEach(e => {
+                if (e.kind === kind) mult *= Number(e.mult || 1);
+            });
+            return mult;
+        }
+
+        function clamp(n, a, b) { return Math.max(a, Math.min(b, n)); }
+
+        function computeReviewStars({ quality, sellPrice }) {
+            // Heuristic: quality helps; excessive margin hurts; reputation helps.
+            const q = Number(quality || 0);
+            const price = Math.max(1, Number(sellPrice || 1));
+            const rec = Math.max(1, q * 5);
+            const margin = price / rec;
+            const rep = Number(gameState.reputation || 0);
+
+            let score = 3.0;
+            score += clamp(q / 30, 0, 2.2);              // up to +2.2
+            score += clamp(rep / 120, 0, 0.8);           // up to +0.8
+            score -= clamp((margin - 1) * 1.8, 0, 2.8);  // up to -2.8
+            score += (Math.random() * 0.6 - 0.3);        // +/- 0.3
+
+            const stars = Math.round(clamp(score, 1, 5));
+            return { stars, margin };
+        }
+
+        function addReview(productName, stars, text) {
+            if (!Array.isArray(gameState.reviews)) gameState.reviews = [];
+            gameState.reviews.unshift({ id: Date.now() + Math.random(), day: gameState.day, productName, stars, text, responded: false });
+            if (gameState.reviews.length > 40) gameState.reviews.pop();
+
+            // update averages
+            gameState.reviewCount = Number(gameState.reviewCount || 0) + 1;
+            const prevAvg = Number(gameState.avgRating || 3.5);
+            const n = gameState.reviewCount;
+            gameState.avgRating = ((prevAvg * (n - 1)) + stars) / n;
+        }
+
+        function respondToReview(id, mode) {
+            const r = (gameState.reviews || []).find(x => String(x.id) === String(id));
+            if (!r || r.responded) return;
+
+            if (mode === 'compensate') {
+                const cost = 3000 + Math.floor(Math.random() * 6000);
+                if (gameState.money < cost) {
+                    notify('Недостаточно денег для компенсации', 'error');
+                    return;
+                }
+                gameState.money -= cost;
+                gameState.reputation = clamp(gameState.reputation + 2, 0, 100);
+                gameState.brandAwareness = clamp(gameState.brandAwareness + 1, 0, 100);
+                r.text += ' • Компания предложила компенсацию.';
+                addNews(`🗣️ Вы ответили на отзыв и предложили компенсацию (${formatMoney(cost)}).`, 'info');
+                notify(`Компенсация отправлена: ${formatMoney(cost)}`, 'success');
+            } else {
+                // polite response
+                gameState.reputation = clamp(gameState.reputation + 1, 0, 100);
+                r.text += ' • Компания ответила публично.';
+                addNews('🗣️ Вы публично ответили на отзыв.', 'info');
+                notify('Ответ опубликован', 'success');
+            }
+
+            r.responded = true;
+            updateUI();
+            const activeTab = document.querySelector('.tab-btn.bg-blue-600');
+            if (activeTab?.dataset.tab === 'meta') renderMeta();
+        }
+
+        function claimQuestReward(kind, id) {
+            const list = kind === 'weekly' ? (gameState.weeklyQuests || []) : (gameState.dailyQuests || []);
+            const q = list.find(x => x.id === id);
+            if (!q || !q.completed || q.claimed) return;
+            q.claimed = true;
+            gameState.money += Number(q.rewardMoney || 0);
+            addNews(`🎯 Награда за квест: ${q.name} (+${formatMoney(q.rewardMoney)})`, 'success');
+            notify(`🎯 Квест выполнен: +${formatMoney(q.rewardMoney)}`, 'success');
+            updateUI();
+            const activeTab = document.querySelector('.tab-btn.bg-blue-600');
+            if (activeTab?.dataset.tab === 'meta') renderMeta();
+        }
+
+        function unlockAchievement(id) {
+            if (!Array.isArray(gameState.unlockedAchievements)) gameState.unlockedAchievements = [];
+            if (gameState.unlockedAchievements.includes(id)) return;
+            gameState.unlockedAchievements.push(id);
+
+            const a = ACHIEVEMENTS.find(x => x.id === id);
+            if (!a) return;
+
+            if (a.reward?.money) {
+                gameState.money += a.reward.money;
+                notify(`🏆 Достижение: ${a.name} (+${formatMoney(a.reward.money)})`, 'success');
+                addNews(`🏆 Достижение: ${a.name} (+${formatMoney(a.reward.money)})`, 'success');
+            }
+            if (a.reward?.reputation) {
+                gameState.reputation = clamp(gameState.reputation + a.reward.reputation, 0, 100);
+                notify(`🏆 Достижение: ${a.name} (+${a.reward.reputation} реп.)`, 'success');
+                addNews(`🏆 Достижение: ${a.name} (+${a.reward.reputation} реп.)`, 'success');
+            }
+
+            if (a.reward?.uniqueComponent) {
+                // grant a special internal component batch
+                const compType = 'processor_mobile';
+                const name = 'Legendary Custom SoC (Award Edition)';
+                const quality = 120;
+                const tier = 5;
+                const qty = 200;
+                addInventory(compType, name, qty);
+                gameState.customComponents.push({
+                    id: Date.now() + Math.random(),
+                    compType,
+                    name,
+                    price: 300,
+                    quality,
+                    tier,
+                    custom: true,
+                    internal: true,
+                    source: 'achievement'
+                });
+                notify(`🏆 ${a.name}: получен уникальный компонент x${qty}`, 'success');
+                addNews(`🏆 ${a.name}: уникальный компонент отправлен на склад.`, 'success');
+            }
+
+            if (a.reward?.rareCard) {
+                // drop a tier 5 batch directly to inventory (card-like)
+                const compType = 'processor_mobile';
+                const base = COMPONENTS[compType].items.find(i => i.tier === 5) || COMPONENTS[compType].items[COMPONENTS[compType].items.length - 1];
+                const fake = createCard(compType, { ...base, tier: 5 });
+                addInventory(fake.compType, fake.name, fake.qty);
+                gameState.customComponents.push({
+                    id: Date.now() + Math.random(),
+                    compType: fake.compType,
+                    name: fake.name,
+                    price: Math.max(1, Math.round(fake.unitPrice * 0.95)),
+                    quality: fake.quality,
+                    tier: fake.tier,
+                    custom: true,
+                    internal: true,
+                    source: 'achievement'
+                });
+                notify(`🏆 ${a.name}: редкая карточка «${getTierName(5)}» → склад`, 'success');
+                addNews(`🏆 ${a.name}: редкая «${getTierName(5)}» партия отправлена на склад.`, 'success');
+            }
+
+            updateUI();
+            const activeTab = document.querySelector('.tab-btn.bg-blue-600');
+            if (activeTab?.dataset.tab === 'meta') renderMeta();
+        }
+
+        function checkAchievements() {
+            // First product
+            if ((gameState.totalProduced || 0) >= 1) unlockAchievement('first_product');
+            if ((gameState.totalProduced || 0) >= 1000) unlockAchievement('produce_1000');
+            if ((gameState.totalSales || 0) >= 1000000) unlockAchievement('sales_1m');
+            if ((gameState.totalRepaired || 0) >= 50) unlockAchievement('repair_50');
+            if (getMaxTier() >= 5) unlockAchievement('all_tiers');
+            if ((gameState.cardsReceivedTotal || 0) >= 100) unlockAchievement('collect_100_cards');
+            if ((gameState.factoryLevel || 1) >= 5) unlockAchievement('factory_lvl5');
+            if ((gameState.brandAwareness || 0) >= 80) unlockAchievement('brand_80');
+            const empTotal = Object.values(gameState.employees || {}).reduce((a,b) => a+b, 0);
+            if (empTotal >= 20) unlockAchievement('staff_20');
+        }
+
+        function updateQuestProgress(kind, amount) {
+            // kind: sell_units, repair_units, produce_units, earn_money, sign_contracts, start_campaigns
+            const upd = (q) => {
+                if (q.completed) return;
+                q.progress = Math.min(q.target, Number(q.progress || 0) + Number(amount || 0));
+                if (q.progress >= q.target) {
+                    q.completed = true;
+                    notify(`🎯 Квест выполнен: ${q.name}`, 'success');
+                    addNews(`🎯 Квест выполнен: ${q.name}`, 'success');
+                }
+            };
+            (gameState.dailyQuests || []).filter(q => q.type === kind).forEach(upd);
+            (gameState.weeklyQuests || []).filter(q => q.type === kind).forEach(upd);
+        }
+
+        function simulateCompetitorDay() {
+            initCompetitorsIfNeeded();
+            const comps = gameState.market.competitors || [];
+
+            // Competitors adjust share slightly based on their strategy and your rating/awareness
+            const repFactor = clamp((gameState.reputation || 0) / 100, 0, 1);
+            const ratingFactor = clamp((gameState.avgRating || 3.5) / 5, 0, 1);
+            const awarenessFactor = clamp((gameState.brandAwareness || 0) / 100, 0, 1);
+            const yourPower = awarenessFactor * 0.45 + ratingFactor * 0.35 + repFactor * 0.20;
+            const yourDelta = (yourPower - 0.55) * 0.6; // slower drift
+
+            // Random competitor moves
+            const moveRoll = Math.random();
+            if (moveRoll < 0.22) {
+                const c = comps[Math.floor(Math.random() * comps.length)];
+                addNews(`🏢 ${c.name} выпустила новую линейку (${c.strategy}).`, 'info');
+                // your sales slow slightly
+                gameState.priceModifiers.push({ kind: 'sales', mult: 0.92, daysLeft: 2, reason: 'competitor_launch' });
+            } else if (moveRoll < 0.36) {
+                const c = comps.find(x => x.strategy === 'budget') || comps[0];
+                addNews(`🏷️ ${c.name} начала демпинг. Ваши продажи замедлились.`, 'warning');
+                gameState.priceModifiers.push({ kind: 'sales', mult: 0.75, daysLeft: 2, reason: 'dumping' });
+            } else if (moveRoll < 0.44) {
+                const c = comps.find(x => x.strategy === 'premium') || comps[0];
+                addNews(`⭐ ${c.name} получила высокий рейтинг у критиков.`, 'info');
+                gameState.priceModifiers.push({ kind: 'sales', mult: 0.88, daysLeft: 2, reason: 'press' });
+            }
+
+            // Market share shift: if you're strong, you gain share (very slowly)
+            const gain = clamp(yourDelta + (Math.random() * 0.24 - 0.12), -0.35, 0.35);
+            gameState.market.yourShare = clamp((gameState.market.yourShare || 1) + gain, 1, 25);
+
+            // Distribute the rest among competitors proportional to their strength
+            const rest = 100 - gameState.market.yourShare;
+            const totalStr = comps.reduce((a, c) => a + (Number(c.strength || 1)), 0) || 1;
+            comps.forEach(c => {
+                c.share = Math.max(1, Math.round(rest * (Number(c.strength || 1) / totalStr)));
+                // keep competitor cash from shrinking if used elsewhere
+                if (c.cashFloor) c.cash = Math.max(c.cash, c.cashFloor);
+            });
+
+            // Normalize sum to 100
+            let sum = gameState.market.yourShare + comps.reduce((a, c) => a + c.share, 0);
+            const diff = 100 - sum;
+            if (diff !== 0 && comps[0]) comps[0].share = Math.max(1, comps[0].share + diff);
+        }
+
+        function tryRandomEvent() {
+            // chance per nextDay
+            const p = 0.22;
+            if (Math.random() > p) return;
+
+            const roll = Math.random();
+            if (roll < 0.32) {
+                // Positive: viral product
+                gameState.priceModifiers.push({ kind: 'sales', mult: 1.5, daysLeft: 3, reason: 'viral' });
+                gameState.brandAwareness = clamp(gameState.brandAwareness + 6, 0, 100);
+                addNews('🚀 Один из ваших продуктов стал вирусным! Продажи +50% на 3 дня.', 'success');
+                notify('🚀 Вирусный хит! Продажи ускорены', 'success');
+            } else if (roll < 0.50) {
+                // Positive: industry award
+                const money = 25000 + Math.floor(Math.random() * 40000);
+                gameState.money += money;
+                gameState.reputation = clamp(gameState.reputation + 5, 0, 100);
+                addNews(`🏆 Вы получили отраслевую награду! +${formatMoney(money)} и +5 репутации.`, 'success');
+                notify('🏆 Отраслевой приз!', 'success');
+                updateQuestProgress('earn_money', money);
+            } else if (roll < 0.64) {
+                // Negative: component shortage (prices up)
+                gameState.priceModifiers.push({ kind: 'component_prices', mult: 1.3, daysLeft: 2, reason: 'shortage' });
+                addNews('⛔ Дефицит компонентов: цены в маркете +30% на 2 дня.', 'warning');
+                notify('⛔ Дефицит компонентов (+30%)', 'warning');
+            } else if (roll < 0.75) {
+                // Negative: defect recall
+                const loss = 15000 + Math.floor(Math.random() * 40000);
+                gameState.money -= loss;
+                gameState.reputation = clamp(gameState.reputation - 6, 0, 100);
+                addNews(`🧯 Брак в партии: отзыв продукции. Потери ${formatMoney(loss)} и -6 репутации.`, 'error');
+                notify('🧯 Отзыв партии (брак)', 'error');
+            } else if (roll < 0.86) {
+                // Negative: hackers
+                const loss = 12000 + Math.floor(Math.random() * 35000);
+                gameState.money -= loss;
+                addNews(`🕵️ Хакерская атака: восстановление обошлось в ${formatMoney(loss)}.`, 'error');
+                notify('🕵️ Хакеры атаковали!', 'error');
+            } else {
+                // Neutral choice: interview
+                showModal(`
+                    <div class="flex justify-between items-center mb-3">
+                        <h3 class="text-xl font-bold">🎙️ Интервью</h3>
+                        <button onclick="closeModal()" class="text-gray-400 hover:text-white text-2xl">&times;</button>
+                    </div>
+                    <p class="text-gray-300 mb-4">Журналист просит интервью о ваших продуктах. Как ответите?</p>
+                    <div class="space-y-2">
+                        <button class="btn-action w-full bg-blue-600 px-4 py-2 rounded-xl" onclick="eventInterviewAnswer('bold')">Мы №1 на рынке, конкуренты отстают</button>
+                        <button class="btn-action w-full bg-gray-700 px-4 py-2 rounded-xl" onclick="eventInterviewAnswer('neutral')">Мы просто делаем хорошие продукты</button>
+                        <button class="btn-action w-full bg-green-600 px-4 py-2 rounded-xl" onclick="eventInterviewAnswer('humble')">Мы учимся и улучшаем качество каждый день</button>
+                    </div>
+                `);
+            }
+        }
+
+        function eventInterviewAnswer(mode) {
+            closeModal();
+            if (mode === 'bold') {
+                gameState.reputation = clamp(gameState.reputation + 3, 0, 100);
+                gameState.brandAwareness = clamp(gameState.brandAwareness + 4, 0, 100);
+                addNews('🎙️ Интервью вышло дерзким: +3 репутации, +4 узнаваемости.', 'info');
+            } else if (mode === 'humble') {
+                gameState.reputation = clamp(gameState.reputation + 5, 0, 100);
+                addNews('🎙️ Интервью вышло честным: +5 репутации.', 'success');
+            } else {
+                gameState.brandAwareness = clamp(gameState.brandAwareness + 2, 0, 100);
+                addNews('🎙️ Интервью прошло нейтрально: +2 узнаваемости.', 'info');
+            }
+            updateUI();
+            const activeTab = document.querySelector('.tab-btn.bg-blue-600');
+            if (activeTab?.dataset.tab === 'meta') renderMeta();
+        }
+
+        function renderMeta() {
+            ensureQuests();
+            initCompetitorsIfNeeded();
+            checkAchievements();
+
+            const achUnlocked = new Set(gameState.unlockedAchievements || []);
+
+            const dailyHtml = (gameState.dailyQuests || []).map(q => {
+                const pct = Math.round((q.progress / q.target) * 100);
+                return `
+                    <div class="bg-gray-800/50 rounded-xl p-3">
+                        <div class="flex justify-between items-center">
+                            <div class="min-w-0">
+                                <div class="font-bold text-sm truncate">${q.name}</div>
+                                <div class="text-[11px] text-gray-400">Награда: ${formatMoney(q.rewardMoney)}</div>
+                            </div>
+                            <button ${q.completed && !q.claimed ? '' : 'disabled'} onclick="claimQuestReward('daily','${q.id}')" class="btn-action px-3 py-1.5 rounded-lg text-xs ${q.completed && !q.claimed ? 'bg-green-600' : 'bg-gray-700 opacity-50'}">
+                                ${q.claimed ? 'Получено' : (q.completed ? 'Забрать' : '…')}
+                            </button>
+                        </div>
+                        <div class="w-full bg-gray-700 rounded-full h-2 mt-2">
+                            <div class="repair-progress bg-blue-500 h-2 rounded-full" style="width:${clamp(pct,0,100)}%"></div>
+                        </div>
+                        <div class="text-[10px] text-gray-500 mt-1">${q.progress}/${q.target}</div>
+                    </div>
+                `;
+            }).join('');
+
+            const weeklyHtml = (gameState.weeklyQuests || []).map(q => {
+                const pct = Math.round((q.progress / q.target) * 100);
+                return `
+                    <div class="bg-gray-800/50 rounded-xl p-3">
+                        <div class="flex justify-between items-center">
+                            <div class="min-w-0">
+                                <div class="font-bold text-sm truncate">${q.name}</div>
+                                <div class="text-[11px] text-gray-400">Награда: ${formatMoney(q.rewardMoney)}</div>
+                            </div>
+                            <button ${q.completed && !q.claimed ? '' : 'disabled'} onclick="claimQuestReward('weekly','${q.id}')" class="btn-action px-3 py-1.5 rounded-lg text-xs ${q.completed && !q.claimed ? 'bg-purple-600' : 'bg-gray-700 opacity-50'}">
+                                ${q.claimed ? 'Получено' : (q.completed ? 'Забрать' : '…')}
+                            </button>
+                        </div>
+                        <div class="w-full bg-gray-700 rounded-full h-2 mt-2">
+                            <div class="repair-progress bg-purple-500 h-2 rounded-full" style="width:${clamp(pct,0,100)}%"></div>
+                        </div>
+                        <div class="text-[10px] text-gray-500 mt-1">${q.progress}/${q.target}</div>
+                    </div>
+                `;
+            }).join('');
+
+            const achHtml = ACHIEVEMENTS.map(a => {
+                const done = achUnlocked.has(a.id);
+                return `
+                    <div class="bg-gray-800/50 rounded-xl p-3 border ${done ? 'border-green-500/30' : 'border-gray-700/30'}">
+                        <div class="flex justify-between items-start gap-2">
+                            <div class="min-w-0">
+                                <div class="font-bold text-sm truncate">${a.name} ${done ? '✅' : ''}</div>
+                                <div class="text-[11px] text-gray-400">${a.desc}</div>
+                            </div>
+                            <div class="text-[10px] text-gray-400 flex-shrink-0">
+                                ${a.reward?.money ? `+${formatMoney(a.reward.money)}` : a.reward?.reputation ? `+${a.reward.reputation} реп.` : a.reward?.uniqueComponent ? 'Уник. компонент' : a.reward?.rareCard ? `${getTierName(5)} партия` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            const comps = (gameState.market.competitors || []);
+            const compHtml = comps.map(c => `
+                <div class="bg-gray-800/50 rounded-xl p-3">
+                    <div class="flex justify-between items-start gap-2">
+                        <div class="min-w-0">
+                            <div class="font-bold text-sm truncate">${c.name}</div>
+                            <div class="text-[11px] text-gray-400">Стратегия: ${c.strategy} • HQ: ${escapeHtml(c.hq || '—')}</div>
+                        </div>
+                        <div class="text-blue-300 text-sm font-bold flex-shrink-0">${Math.round(c.share)}%</div>
+                    </div>
+                    <div class="mt-2 text-[11px] text-gray-400 flex justify-between">
+                        <span>Кэш: <span class="text-white font-bold">${formatMoney(Math.round(c.cash || 0))}</span></span>
+                        <span>Сила: <span class="text-white font-bold">${Math.round(c.strength || 0)}</span></span>
+                    </div>
+                    <button onclick="showTab('buyouts')" class="btn-action mt-2 w-full bg-gray-700 px-3 py-2 rounded-lg text-xs">🤝 Перейти в «Выкуп»</button>
+                </div>
+            `).join('');
+
+            const reviewsHtml = (gameState.reviews || []).slice(0, 10).map(r => {
+                const stars = '★'.repeat(r.stars) + '☆'.repeat(5 - r.stars);
+                const canRespond = r.stars <= 2 && !r.responded;
+                return `
+                    <div class="bg-gray-800/50 rounded-xl p-3">
+                        <div class="flex justify-between items-start gap-2">
+                            <div class="min-w-0">
+                                <div class="text-sm font-bold truncate">${escapeHtml(r.productName)}</div>
+                                <div class="text-yellow-400 text-xs">${stars}</div>
+                                <div class="text-[11px] text-gray-400 whitespace-normal break-words">${escapeHtml(r.text)}</div>
+                            </div>
+                            <div class="text-[10px] text-gray-500 flex-shrink-0">День ${r.day}</div>
+                        </div>
+                        ${canRespond ? `
+                        <div class="mt-2 flex gap-2">
+                            <button onclick="respondToReview('${r.id}','reply')" class="btn-action flex-1 bg-blue-600 px-3 py-1.5 rounded-lg text-xs">Ответить</button>
+                            <button onclick="respondToReview('${r.id}','compensate')" class="btn-action flex-1 bg-green-600 px-3 py-1.5 rounded-lg text-xs">Компенсация</button>
+                        </div>` : (r.responded ? `<div class="mt-2 text-[10px] text-gray-500">Вы ответили</div>` : '')}
+                    </div>
+                `;
+            }).join('');
+
+            const newsHtml = (gameState.newsLog || []).slice(0, 10).map(n => `
+                <div class="bg-gray-800/50 rounded-xl p-3">
+                    <div class="text-[11px] text-gray-500">День ${n.day}</div>
+                    <div class="text-sm whitespace-normal break-words">${escapeHtml(n.text)}</div>
+                </div>
+            `).join('');
+
+            const rating = Number(gameState.avgRating || 3.5);
+            const salesMult = getSalesSpeedMultiplierFromRating();
+
+            const rep = Number(gameState.reputation || 0);
+            const awareness = Number(gameState.brandAwareness || 0);
+
+            const shareHtml = (() => {
+                const your = Math.round(gameState.market.yourShare || 0);
+                const rows = [
+                    { name: gameState.companyName || 'Вы', share: your, cls: 'bg-emerald-500' },
+                    ...(comps || []).map(c => ({ name: c.name, share: Math.round(c.share || 0), cls: 'bg-blue-500' }))
+                ].sort((a, b) => b.share - a.share);
+
+                return rows.map(r => `
+                    <div class="space-y-1">
+                        <div class="flex justify-between text-xs text-gray-300 gap-2">
+                            <span class="truncate min-w-0">${escapeHtml(r.name)}</span>
+                            <span class="text-white font-bold flex-shrink-0">${r.share}%</span>
+                        </div>
+                        <div class="w-full bg-gray-700/60 rounded-full h-2 overflow-hidden">
+                            <div class="h-2 ${r.cls}" style="width:${clamp(r.share,0,100)}%"></div>
+                        </div>
+                    </div>
+                `).join('');
+            })();
+
+            const effects = Array.isArray(gameState.priceModifiers) ? gameState.priceModifiers : [];
+            const effectsHtml = effects.length === 0 ? '<div class="text-xs text-gray-500">Нет активных эффектов</div>' : effects.slice(0, 8).map(e => {
+                const label = e.kind === 'sales' ? 'Продажи' : e.kind === 'component_prices' ? 'Цены компонентов' : e.kind;
+                const pct = Math.round((Number(e.mult || 1) - 1) * 100);
+                const sign = pct >= 0 ? '+' : '';
+                const cls = pct >= 0 ? 'bg-emerald-600/25 border-emerald-500/30 text-emerald-200' : 'bg-red-600/25 border-red-500/30 text-red-200';
+                return `
+                    <div class="${cls} border rounded-lg px-2 py-1 text-[11px] flex justify-between gap-2">
+                        <span class="truncate">${label}</span>
+                        <span class="font-bold flex-shrink-0">${sign}${pct}% • ${Number(e.daysLeft||0)}д</span>
+                    </div>
+                `;
+            }).join('');
+
+            const html = `
+                <div class="flex items-start justify-between gap-3 mb-4">
+                    <div class="min-w-0">
+                        <h3 class="text-xl font-extrabold">📈 Статистика</h3>
+                        <p class="text-gray-400 text-sm">Квесты, достижения, рынок, события и отзывы</p>
+                    </div>
+                    <button onclick="showTab('buyouts')" class="btn-action bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-lg text-xs whitespace-nowrap">🤝 Выкуп компаний</button>
+                </div>
+
+                <div class="grid md:grid-cols-4 gap-3 mb-4">
+                    <div class="bg-gray-800/50 rounded-2xl p-4">
+                        <div class="text-gray-400 text-xs">Рейтинг</div>
+                        <div class="text-yellow-400 font-extrabold text-2xl">${rating.toFixed(2)} ★</div>
+                        <div class="text-[11px] text-gray-400">Продажи: <span class="text-white font-bold">x${salesMult.toFixed(2)}</span></div>
+                    </div>
+                    <div class="bg-gray-800/50 rounded-2xl p-4">
+                        <div class="text-gray-400 text-xs">Репутация</div>
+                        <div class="text-emerald-300 font-extrabold text-2xl">${Math.round(rep)}</div>
+                        <div class="text-[11px] text-gray-400">Влияет на рейтинг и сделки</div>
+                    </div>
+                    <div class="bg-gray-800/50 rounded-2xl p-4">
+                        <div class="text-gray-400 text-xs">Узнаваемость</div>
+                        <div class="text-blue-300 font-extrabold text-2xl">${Math.round(awareness)}%</div>
+                        <div class="text-[11px] text-gray-400">Ускоряет продажи</div>
+                    </div>
+                    <div class="bg-gray-800/50 rounded-2xl p-4">
+                        <div class="text-gray-400 text-xs">Доля рынка</div>
+                        <div class="text-purple-300 font-extrabold text-2xl">${Math.round(gameState.market.yourShare || 0)}%</div>
+                        <div class="text-[11px] text-gray-400">Конкурентов: <span class="text-white font-bold">${comps.length}</span></div>
+                    </div>
+                </div>
+
+                <div class="grid lg:grid-cols-3 gap-4 mb-4">
+                    <div class="bg-gray-900/30 rounded-2xl p-4 lg:col-span-2">
+                        <h4 class="font-bold mb-3">🌍 Расклад рынка</h4>
+                        <div class="space-y-3">${shareHtml}</div>
+                    </div>
+                    <div class="bg-gray-900/30 rounded-2xl p-4">
+                        <h4 class="font-bold mb-3">🧩 Активные эффекты</h4>
+                        <div class="space-y-2">${effectsHtml}</div>
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="space-y-3">
+                        <div class="bg-gray-900/30 rounded-2xl p-4">
+                            <h4 class="font-bold mb-2">🎯 Ежедневные квесты</h4>
+                            <div class="space-y-2">${dailyHtml || '<p class="text-gray-500 text-sm">Нет</p>'}</div>
+                        </div>
+                        <div class="bg-gray-900/30 rounded-2xl p-4">
+                            <h4 class="font-bold mb-2">📅 Еженедельные квесты</h4>
+                            <div class="space-y-2">${weeklyHtml || '<p class="text-gray-500 text-sm">Нет</p>'}</div>
+                        </div>
+                        <div class="bg-gray-900/30 rounded-2xl p-4">
+                            <h4 class="font-bold mb-2">🏆 Достижения</h4>
+                            <div class="space-y-2 max-h-80 overflow-y-auto">${achHtml}</div>
+                        </div>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="bg-gray-900/30 rounded-2xl p-4">
+                            <h4 class="font-bold mb-2">⭐ Отзывы (последние)</h4>
+                            <div class="space-y-2 max-h-80 overflow-y-auto">${reviewsHtml || '<p class="text-gray-500 text-sm">Нет отзывов</p>'}</div>
+                        </div>
+                        <div class="bg-gray-900/30 rounded-2xl p-4">
+                            <h4 class="font-bold mb-2">📰 Новости / события</h4>
+                            <div class="space-y-2 max-h-64 overflow-y-auto">${newsHtml || '<p class="text-gray-500 text-sm">Пока тихо…</p>'}</div>
+                        </div>
+                        <div class="bg-gray-900/30 rounded-2xl p-4">
+                            <h4 class="font-bold mb-2">🏢 Конкуренты</h4>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">${compHtml}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('tabContent').innerHTML = html;
+        }
+
+        // ==================== BUYOUTS (ACQUISITIONS) ====================
+        function calcBuyoutPrice(c) {
+            // Premium valuation based on cash, market share and strength
+            const cash = Math.max(0, Number(c.cash || 0));
+            const share = Math.max(0, Number(c.share || 0));
+            const strength = Math.max(1, Number(c.strength || 1));
+            const base = cash * 3.6 + share * 320000 + strength * 12000;
+            // Smaller-share companies are significantly cheaper
+            const sizeFactor = Math.max(0.35, Math.min(1.1, 0.35 + (share / 18)));
+            // Reputation affects ability to negotiate slightly
+            const repDisc = clamp((Number(gameState.reputation || 0) - 50) / 400, -0.04, 0.06);
+            return Math.max(350000, Math.round(base * sizeFactor * (1 - repDisc)));
+        }
+
+        function canBuyoutCompany(c) {
+            // Small companies are buyable; also allow if they are weakened (low cash)
+            const share = Number(c.share || 0);
+            const cash = Number(c.cash || 0);
+            return share <= 10 || cash <= 250000;
+        }
+
+        function renderBuyouts() {
+            initCompetitorsIfNeeded();
+            const comps = gameState.market.competitors || [];
+
+            const html = `
+                <h3 class="text-xl font-bold mb-4">🤝 Выкуп компаний</h3>
+                <div class="bg-gray-800/50 rounded-2xl p-4 mb-4">
+                    <div class="text-sm text-gray-300">Здесь можно <span class="text-white font-bold">выкупать</span> небольшие компании и повышать долю рынка.</div>
+                    <div class="mt-2 text-[11px] text-gray-400">Обычно выкуп доступен, если доля компании ≤ 10% или у неё мало кэша. Репутация помогает немного снижать цену.</div>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-3">
+                    ${comps.length === 0 ? `
+                        <div class="bg-gray-800/50 rounded-2xl p-6 text-center text-gray-400">Нет компаний для выкупа — вы уже лидер рынка.</div>
+                    ` : comps.map(c => {
+                        const buyable = canBuyoutCompany(c);
+                        const price = calcBuyoutPrice(c);
+                        const badge = buyable ? 'bg-green-600/30 border-green-500/30' : 'bg-gray-800/50 border-gray-700/40';
+                        return `
+                            <div class="bg-gray-800/50 rounded-2xl p-4 border ${badge}">
+                                <div class="flex justify-between items-start gap-2">
+                                    <div class="min-w-0">
+                                        <div class="font-extrabold text-sm truncate">${c.name}</div>
+                                        <div class="text-[11px] text-gray-400 truncate">${escapeHtml(c.legal || '')}</div>
+                                    </div>
+                                    <div class="text-blue-300 font-extrabold text-sm flex-shrink-0">${Math.round(c.share)}%</div>
+                                </div>
+
+                                <div class="mt-2 text-[11px] text-gray-400 space-y-1">
+                                    <div class="flex justify-between"><span>Штаб-квартира</span><span class="text-white font-semibold">${escapeHtml(c.hq || '—')}</span></div>
+                                    <div class="flex justify-between"><span>CEO</span><span class="text-white font-semibold">${escapeHtml(c.ceo || '—')}</span></div>
+                                    <div class="flex justify-between"><span>Основана</span><span class="text-white font-semibold">${c.founded || '—'}</span></div>
+                                    <div class="flex justify-between"><span>Кэш</span><span class="text-white font-semibold">${formatMoney(Math.round(c.cash || 0))}</span></div>
+                                </div>
+
+                                <div class="mt-3 bg-gray-900/30 rounded-xl p-3">
+                                    <div class="text-[11px] text-gray-400">Оценка выкупа</div>
+                                    <div class="text-yellow-300 font-extrabold text-lg">${formatMoney(price)}</div>
+                                    <div class="text-[11px] text-gray-400">${escapeHtml(c.tagline || '')}</div>
+                                </div>
+
+                                <button ${buyable ? '' : 'disabled'} onclick="buyoutCompany('${c.id}')" class="btn-action mt-3 w-full px-4 py-2 rounded-xl text-sm font-bold ${buyable ? 'bg-gradient-to-r from-emerald-600 to-green-600' : 'bg-gray-700 opacity-50 cursor-not-allowed'}">
+                                    🤝 Выкупить
+                                </button>
+                                ${buyable ? '' : '<div class="mt-2 text-[10px] text-gray-500">Недоступно: компания слишком крупная и не ослаблена.</div>'}
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+
+            document.getElementById('tabContent').innerHTML = html;
+        }
+
+        function buyoutCompany(id) {
+            initCompetitorsIfNeeded();
+            const comps = gameState.market.competitors || [];
+            const c = comps.find(x => x.id === id);
+            if (!c) return;
+
+            if (!canBuyoutCompany(c)) {
+                notify('Эта компания пока слишком сильна для выкупа.', 'warning');
+                return;
+            }
+
+            const price = calcBuyoutPrice(c);
+            if (gameState.money < price) {
+                notify(`Недостаточно денег для выкупа. Нужно ${formatMoney(price)}`, 'error');
+                return;
+            }
+
+            if (!confirm(`Выкупить ${c.name} за ${formatMoney(price)}?`)) return;
+
+            gameState.money -= price;
+            // You gain their share, but cap to avoid 100% instantly
+            gameState.market.yourShare = clamp((gameState.market.yourShare || 10) + (c.share || 0), 1, 95);
+            gameState.market.competitors = comps.filter(x => x.id !== id);
+            gameState.reputation = clamp((gameState.reputation || 0) + 1, 0, 100);
+
+            addNews(`🤝 Вы выкупили ${c.name}. Доля рынка выросла.`, 'success');
+            notify(`🤝 Выкуп: ${c.name}`, 'success');
+
+            updateUI();
+            // refresh buyouts view
+            const activeTab = document.querySelector('.tab-btn.bg-blue-600');
+            if (activeTab?.dataset.tab === 'buyouts') renderBuyouts();
+        }
+
+        // Backward compatibility (old button)
+        function tryAcquireCompetitor(id) {
+            buyoutCompany(id);
+        }
 
         // ==================== INIT ====================
         let repairInterval = null;
 
         function init() {
             loadGame();
-            if (gameState.companyName) {
-                document.getElementById('welcomeScreen').classList.add('hidden');
-                document.getElementById('gameScreen').classList.remove('hidden');
-                document.getElementById('statsBar').style.display = 'grid';
-                document.getElementById('headerStats').classList.remove('hidden');
-                document.getElementById('headerActions').classList.remove('hidden');
-                // Генерируем контракты если их нет
+
+            // Sanitize critical fields
+            gameState.companyName = (gameState.companyName || '').trim();
+
+            // Theme
+            applyTheme();
+            
+            // Initialize card system
+            if (!gameState.cardCollection) gameState.cardCollection = [];
+            if (!gameState.selectedCardCategory) gameState.selectedCardCategory = 'smartphone';
+            startCardTimer();
+
+            // Dev logo clicks
+            initDevLogo();
+
+            // Screen sync
+            const hasCompany = !!gameState.companyName;
+            const welcome = document.getElementById('welcomeScreen');
+            const create = document.getElementById('createCompanyScreen');
+            const game = document.getElementById('gameScreen');
+            const headerActions = document.getElementById('headerActions');
+            const headerStats = document.getElementById('headerStats');
+
+            if (hasCompany) {
+                welcome?.classList.add('hidden');
+                create?.classList.add('hidden');
+                game?.classList.remove('hidden');
+                headerActions?.classList.remove('hidden');
+                headerStats?.classList.remove('hidden');
+
                 if (!gameState.availableContracts || gameState.availableContracts.length === 0) {
                     generateContracts();
                 }
+
                 updateUI();
-                showTab('production');
+                showTab('home');
                 startRepairTimer();
                 startSalesTimer();
                 startResearchTimer();
+            } else {
+                // Ensure only welcome is visible
+                welcome?.classList.remove('hidden');
+                create?.classList.add('hidden');
+                game?.classList.add('hidden');
+                headerActions?.classList.add('hidden');
+                headerStats?.classList.add('hidden');
+                updateUI();
             }
         }
 
@@ -1617,27 +3572,122 @@
         function saveGame() {
             try {
                 const data = JSON.stringify(gameState);
-                setCookie('techEmpireSave', data, 365);
+                // localStorage is the primary store (no strict 4KB limit)
                 localStorage.setItem('techEmpireSave', data);
+                // cookie is a fallback; may fail for large saves (cards/components)
+                try { setCookie('techEmpireSave', data, 365); } catch (e) {}
             } catch(e) { console.error(e); }
         }
 
         function loadGame() {
-            try {
-                let saved = getCookie('techEmpireSave') || localStorage.getItem('techEmpireSave');
-                if (saved) {
-                    const parsed = JSON.parse(saved);
-                    gameState = { ...gameState, ...parsed };
-                    if (!gameState.repairingDevices) gameState.repairingDevices = [];
-                    if (!gameState.repairedDevices) gameState.repairedDevices = [];
-                    if (!gameState.activeResearch) gameState.activeResearch = [];
-                    if (!gameState.sellingProducts) gameState.sellingProducts = [];
-                    if (!gameState.inventory) gameState.inventory = {};
+            // Prefer localStorage (no 4KB limit). Fallback to cookie.
+            const savedLS = localStorage.getItem('techEmpireSave');
+            const savedCookie = getCookie('techEmpireSave');
 
-                    // Migrate/normalize inventory keys (fix quotes/entities mismatches)
-                    normalizeAllInventoryKeys();
+            let parsed = null;
+
+            // Try localStorage first
+            if (savedLS) {
+                try {
+                    parsed = JSON.parse(savedLS);
+                } catch (e) {
+                    console.warn('Invalid localStorage save, trying cookie...', e);
                 }
-            } catch(e) { console.error(e); }
+            }
+
+            // If localStorage failed, try cookie
+            if (!parsed && savedCookie) {
+                try {
+                    parsed = JSON.parse(savedCookie);
+                } catch (e) {
+                    console.warn('Invalid cookie save.', e);
+                }
+            }
+
+            if (!parsed) return;
+
+            gameState = { ...gameState, ...parsed };
+            if (!gameState.repairingDevices) gameState.repairingDevices = [];
+            if (!gameState.repairedDevices) gameState.repairedDevices = [];
+            if (!gameState.activeResearch) gameState.activeResearch = [];
+            if (!gameState.sellingProducts) gameState.sellingProducts = [];
+            if (!gameState.inventory) gameState.inventory = {};
+            if (!gameState.cardCollection) gameState.cardCollection = [];
+            if (!gameState.selectedCardCategory) gameState.selectedCardCategory = 'smartphone';
+            if (!gameState.customComponents) gameState.customComponents = [];
+
+            // Settings defaults
+            if (typeof gameState.devMenuUnlocked !== 'boolean') gameState.devMenuUnlocked = false;
+            if (typeof gameState.devSkipCardCooldown !== 'boolean') gameState.devSkipCardCooldown = false;
+            if (typeof gameState.darkTheme !== 'boolean') gameState.darkTheme = true;
+
+            // Migrate older cards to new fields (qty/unitPrice/value)
+            if (Array.isArray(gameState.cardCollection)) {
+                gameState.cardCollection = gameState.cardCollection.map(c => {
+                    const tier = Number(c.tier || 1);
+                    const qty = Number(c.qty || 0) || rollCardQty(tier);
+                    const unitPrice = Number(c.unitPrice || c.price || 1);
+                    const value = Number(c.value || Math.round(unitPrice * qty));
+                    return { ...c, qty, unitPrice, value };
+                });
+            }
+
+            // New system: cards are auto-sent to warehouse (migrate old saves)
+            if (Array.isArray(gameState.cardCollection) && gameState.cardCollection.length > 0) {
+                gameState.cardCollection.forEach(card => {
+                    const qty = Number(card.qty || 1);
+                    const cleanName = stripTierPrefix(card.name);
+                    addInventory(card.compType, cleanName, qty);
+                    if (!gameState.customComponents) gameState.customComponents = [];
+                    gameState.customComponents.push({
+                        id: Date.now() + Math.random(),
+                        compType: card.compType,
+                        name: cleanName,
+                        price: Math.max(1, Math.round(Number(card.unitPrice || card.price || 1) * 0.95)),
+                        quality: card.quality,
+                        tier: card.tier,
+                        custom: true,
+                        internal: true,
+                        source: card.exclusive ? 'card_exclusive' : 'card'
+                    });
+                });
+                gameState.cardCollection = [];
+            }
+
+            // Strip legacy prefixes (Prototype / Tier words) from existing card items (inventory + customComponents)
+            try {
+                const stripLegacy = (s) => stripTierPrefix(String(s || '').replace(/^Prototype\s+/i, ''));
+
+                // inventory keys
+                const inv = gameState.inventory || {};
+                const invNext = {};
+                Object.entries(inv).forEach(([k, v]) => {
+                    const qty = Number(v || 0);
+                    const idx = k.indexOf(':');
+                    if (idx === -1) {
+                        invNext[k] = (invNext[k] || 0) + qty;
+                        return;
+                    }
+                    const t = k.slice(0, idx);
+                    const nm = k.slice(idx + 1);
+                    const newName = stripLegacy(nm);
+                    const nk = makeInvKey(t, newName);
+                    invNext[nk] = (invNext[nk] || 0) + qty;
+                });
+                gameState.inventory = invNext;
+
+                // custom components
+                if (!gameState.customComponents) gameState.customComponents = [];
+                gameState.customComponents = gameState.customComponents.map(c => {
+                    const nm = String(c?.name || '');
+                    const cleaned = stripLegacy(nm);
+                    if (cleaned !== nm) return { ...c, name: cleaned };
+                    return c;
+                });
+            } catch (e) {}
+
+            // Migrate/normalize inventory keys (fix quotes/entities mismatches)
+            normalizeAllInventoryKeys();
         }
 
         function resetGame() {
@@ -1650,21 +3700,51 @@
 
         // ==================== UI ====================
         function updateUI() {
-            document.getElementById('companyName').textContent = gameState.companyName;
-            document.getElementById('moneyDisplay').textContent = formatMoney(gameState.money);
-            document.getElementById('dayDisplay').textContent = gameState.day;
-            document.getElementById('reputationDisplay').textContent = gameState.reputation;
-            
+            const cn = document.getElementById('companyName');
+            if (cn) cn.textContent = gameState.companyName;
+
+            const moneyEl = document.getElementById('moneyDisplay');
+            if (moneyEl) moneyEl.textContent = formatMoney(gameState.money);
+            const dayEl = document.getElementById('dayDisplay');
+            if (dayEl) dayEl.textContent = gameState.day;
+
+            // Live update for Home tab (without re-render)
+            const homeMoneyEl = document.getElementById('homeMoneyDisplay');
+            if (homeMoneyEl) homeMoneyEl.textContent = formatMoney(gameState.money);
+            const homeDayEl = document.getElementById('homeDayDisplay');
+            if (homeDayEl) homeDayEl.textContent = gameState.day;
+
+            const repEl = document.getElementById('reputationDisplay');
+            if (repEl) repEl.textContent = gameState.reputation;
+
             let totalProducts = 0;
-            gameState.products.forEach(p => totalProducts += (p.count || 1));
-            document.getElementById('productsDisplay').textContent = totalProducts.toLocaleString();
-            
+            (gameState.products || []).forEach(p => totalProducts += (p.count || 1));
+            const prodEl = document.getElementById('productsDisplay');
+            if (prodEl) prodEl.textContent = totalProducts.toLocaleString();
+            const homeProdEl = document.getElementById('homeProductsDisplay');
+            if (homeProdEl) homeProdEl.textContent = totalProducts.toLocaleString();
+
             let totalComponents = 0;
-            Object.values(gameState.inventory).forEach(v => totalComponents += v);
-            document.getElementById('componentsDisplay').textContent = totalComponents.toLocaleString();
-            
-            document.getElementById('employeesDisplay').textContent = Object.values(gameState.employees).reduce((a,b) => a+b, 0);
-            document.getElementById('levelDisplay').textContent = gameState.level;
+            Object.values(gameState.inventory || {}).forEach(v => totalComponents += Number(v || 0));
+            const compEl = document.getElementById('componentsDisplay');
+            if (compEl) compEl.textContent = totalComponents.toLocaleString();
+            const homeCompEl = document.getElementById('homeComponentsDisplay');
+            if (homeCompEl) homeCompEl.textContent = totalComponents.toLocaleString();
+
+            const empTotal = Object.values(gameState.employees || {}).reduce((a,b) => a+b, 0);
+            const empEl = document.getElementById('employeesDisplay');
+            if (empEl) empEl.textContent = empTotal;
+            const homeEmpEl = document.getElementById('homeEmployeesDisplay');
+            if (homeEmpEl) homeEmpEl.textContent = empTotal.toLocaleString();
+
+            const lvlEl = document.getElementById('levelDisplay');
+            if (lvlEl) lvlEl.textContent = gameState.level;
+
+            const homeSalesEl = document.getElementById('homeSalesDisplay');
+            if (homeSalesEl) homeSalesEl.textContent = formatMoney(gameState.totalSales || 0);
+            const homeProducedEl = document.getElementById('homeProducedDisplay');
+            if (homeProducedEl) homeProducedEl.textContent = (gameState.totalProduced || 0).toLocaleString();
+
             saveGame();
         }
 
@@ -1701,8 +3781,9 @@
             const name = el.dataset.name;
             const price = parseInt(el.dataset.price || '0', 10) || 0;
             const quality = parseInt(el.dataset.quality || '0', 10) || 0;
+            const tier = parseInt(el.dataset.tier || '1', 10) || 1;
             const discount = parseFloat(el.dataset.discount || '0') || 0;
-            selectComponent(compType, name, price, quality, discount);
+            selectComponent(compType, name, price, quality, tier, discount);
         }
 
         function selectBuildFromEl(el) {
@@ -1914,17 +3995,19 @@
             const name = document.getElementById('companyNameInput').value.trim();
             if (!name) { notify('Введите название!', 'error'); return; }
             gameState.companyName = name;
-            document.getElementById('createCompanyScreen').classList.add('hidden');
-            document.getElementById('gameScreen').classList.remove('hidden');
-            document.getElementById('statsBar').style.display = 'grid';
-            document.getElementById('headerStats').classList.remove('hidden');
-            document.getElementById('headerActions').classList.remove('hidden');
+
+            document.getElementById('welcomeScreen')?.classList.add('hidden');
+            document.getElementById('createCompanyScreen')?.classList.add('hidden');
+            document.getElementById('gameScreen')?.classList.remove('hidden');
+            document.getElementById('headerActions')?.classList.remove('hidden');
+            document.getElementById('headerStats')?.classList.remove('hidden');
+
             generateContracts();
             startRepairTimer();
             startSalesTimer();
             startResearchTimer();
             updateUI();
-            showTab('production');
+            showTab('home');
             notify(`🎉 Компания "${name}" создана!`, 'success');
         }
 
@@ -1941,6 +4024,7 @@
             content.className = 'slide-in';
             
             switch(tabName) {
+                case 'home': renderHome(); break;
                 case 'production': renderProduction(); break;
                 case 'components': renderComponents(); break;
                 case 'factory': renderFactory(); break;
@@ -1951,6 +4035,8 @@
                 case 'staff': renderStaff(); break;
                 case 'market': renderMarket(); break;
                 case 'warehouse': renderWarehouse(); break;
+                case 'meta': renderMeta(); break;
+                case 'buyouts': renderBuyouts(); break;
                 case 'settings': renderSettings(); break;
             }
         }
@@ -1964,10 +4050,164 @@
             return tier;
         }
 
+        // ==================== HOME ====================
+        function renderHome() {
+            let totalProducts = 0;
+            gameState.products.forEach(p => totalProducts += (p.count || 1));
+
+            let totalComponents = 0;
+            Object.values(gameState.inventory || {}).forEach(v => totalComponents += Number(v || 0));
+
+            const employeesTotal = Object.values(gameState.employees || {}).reduce((a,b) => a+b, 0);
+
+            const salaryMonthly = (gameState.employees.engineers * 800)
+                + (gameState.employees.marketers * 600)
+                + (gameState.employees.repairmen * 500)
+                + (gameState.employees.researchers * 1000);
+
+            const daysUntilPayday = 30 - (gameState.day % 30);
+
+            const html = `
+                <div class="flex items-start justify-between gap-3 mb-4">
+                    <div class="min-w-0">
+                        <h3 class="text-xl font-bold">🏢 ${escapeHtml(gameState.companyName || 'Tech Empire')}</h3>
+                        <p class="text-gray-400 text-sm">Уровень: <span class="text-green-400 font-bold">${gameState.level}</span> • Репутация: <span class="text-yellow-400 font-bold">${gameState.reputation}</span> • Узнаваемость: <span class="text-blue-400 font-bold">${gameState.brandAwareness}%</span></p>
+                    </div>
+                </div>
+
+                <div class="home-hero relative overflow-hidden rounded-2xl p-4 md:p-5 mb-3 bg-gradient-to-br from-emerald-500/18 via-sky-500/10 to-purple-500/18">
+                    <div class="absolute -top-16 -right-16 w-56 h-56 rounded-full bg-emerald-400/10 blur-2xl"></div>
+                    <div class="absolute -bottom-20 -left-20 w-64 h-64 rounded-full bg-blue-400/10 blur-2xl"></div>
+                    <div class="absolute inset-0 opacity-30" style="background: radial-gradient(600px 260px at 30% 30%, rgba(255,255,255,0.10), transparent 60%);"></div>
+
+                    <div class="relative flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                        <div class="min-w-0">
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="text-[11px] text-gray-300">💰 Баланс</span>
+                                <span class="text-[11px] px-2 py-0.5 rounded-full bg-black/25 border border-white/10">📅 День <span id="homeDayDisplay" class="font-bold text-white">${gameState.day}</span></span>
+                            </div>
+                            <div id="homeMoneyDisplay" class="text-4xl md:text-5xl font-extrabold text-emerald-300 tracking-tight leading-none truncate">${formatMoney(gameState.money)}</div>
+                            <div class="mt-2 text-[11px] text-gray-300">Рейтинг: <span class="text-yellow-300 font-bold">${Number(gameState.avgRating||3.5).toFixed(2)}★</span> • Репутация: <span class="text-white font-bold">${Math.round(gameState.reputation||0)}</span></div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-2 text-[11px] md:w-[340px]">
+                            <div class="bg-black/20 rounded-xl px-3 py-2 border border-white/10">
+                                <div class="text-gray-300">Макс. редкость</div>
+                                <div class="font-extrabold text-white">${getTierName(getMaxTier())}</div>
+                            </div>
+                            <div class="bg-black/20 rounded-xl px-3 py-2 border border-white/10">
+                                <div class="text-gray-300">Мощность/день</div>
+                                <div class="font-extrabold text-white">${getEffectiveProductionCapacity().toLocaleString()}</div>
+                            </div>
+                            <div class="bg-black/20 rounded-xl px-3 py-2 border border-white/10">
+                                <div class="text-gray-300">Узнаваемость</div>
+                                <div class="font-extrabold text-white">${Math.round(gameState.brandAwareness||0)}%</div>
+                            </div>
+                            <div class="bg-black/20 rounded-xl px-3 py-2 border border-white/10">
+                                <div class="text-gray-300">Доля рынка</div>
+                                <div class="font-extrabold text-white">${Math.round(gameState.market?.yourShare || 0)}%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 md:grid-cols-5 gap-2 mb-4">
+                    <div class="bg-gray-800/50 rounded-xl p-3">
+                        <div class="text-gray-400 text-xs">Товары</div>
+                        <div id="homeProductsDisplay" class="text-blue-400 font-bold">${totalProducts.toLocaleString()}</div>
+                    </div>
+                    <div class="bg-gray-800/50 rounded-xl p-3">
+                        <div class="text-gray-400 text-xs">Детали</div>
+                        <div id="homeComponentsDisplay" class="text-cyan-400 font-bold">${totalComponents.toLocaleString()}</div>
+                    </div>
+                    <div class="bg-gray-800/50 rounded-xl p-3">
+                        <div class="text-gray-400 text-xs">Персонал</div>
+                        <div id="homeEmployeesDisplay" class="text-purple-400 font-bold">${employeesTotal.toLocaleString()}</div>
+                    </div>
+                    <div class="bg-gray-800/50 rounded-xl p-3">
+                        <div class="text-gray-400 text-xs">Продажи</div>
+                        <div id="homeSalesDisplay" class="text-emerald-400 font-bold">${formatMoney(gameState.totalSales || 0)}</div>
+                    </div>
+                    <div class="bg-gray-800/50 rounded-xl p-3">
+                        <div class="text-gray-400 text-xs">Произведено</div>
+                        <div id="homeProducedDisplay" class="text-orange-400 font-bold">${(gameState.totalProduced || 0).toLocaleString()}</div>
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="bg-gray-800/50 rounded-2xl p-4">
+                        <h4 class="font-bold mb-2">👥 Персонал</h4>
+                        <div class="text-sm text-gray-300 space-y-1">
+                            <div class="flex justify-between"><span>Инженеры</span><span class="text-white font-bold">${gameState.employees.engineers}</span></div>
+                            <div class="flex justify-between"><span>Маркетологи</span><span class="text-white font-bold">${gameState.employees.marketers}</span></div>
+                            <div class="flex justify-between"><span>Ремонтники</span><span class="text-white font-bold">${gameState.employees.repairmen}</span></div>
+                            <div class="flex justify-between"><span>Исследователи</span><span class="text-white font-bold">${gameState.employees.researchers}</span></div>
+                        </div>
+                        <div class="mt-3 text-xs text-gray-400">
+                            💸 Зарплаты/мес: <span class="text-yellow-400 font-bold">${formatMoney(salaryMonthly)}</span> • До выплаты: <span class="text-blue-400 font-bold">${daysUntilPayday} дн.</span>
+                        </div>
+
+                        ${gameState.devMenuUnlocked ? `
+                        <div class="mt-4 pt-3 border-t border-gray-700/50">
+                            <div class="flex items-center justify-between mb-2">
+                                <h5 class="font-bold text-sm">🛠️ Меню разработчика</h5>
+                                <span class="text-[10px] text-gray-400">Dev</span>
+                            </div>
+                            <div class="space-y-2">
+                                <button onclick="devGrantMoney(1000000)" class="btn-action w-full bg-gradient-to-r from-emerald-600 to-green-600 px-3 py-2 rounded-lg text-xs font-bold">
+                                    + $1,000,000
+                                </button>
+                                <label class="flex items-center justify-between bg-gray-700/40 rounded-lg px-3 py-2 text-xs">
+                                    <span class="text-gray-200">Пропуск ожидания карточек</span>
+                                    <input type="checkbox" ${gameState.devSkipCardCooldown ? 'checked' : ''} onchange="devToggleSkipCardCooldown(this.checked)">
+                                </label>
+                            </div>
+                        </div>
+                        ` : ''}
+                    </div>
+
+                    <div class="bg-gray-800/50 rounded-2xl p-4">
+                        <h4 class="font-bold mb-2">🎴 Ежечасные карточки</h4>
+                        <div id="cardDropTimer" class="text-gray-400 mb-3"></div>
+
+                        <div class="mb-3">
+                            <label class="block text-gray-400 mb-2 text-sm">Категория:</label>
+                            <div class="grid grid-cols-3 md:grid-cols-4 gap-2" id="cardCategoryGrid"></div>
+                        </div>
+
+                        <button id="claimCardsBtn" onclick="claimCards()" class="btn-action bg-gradient-to-r from-yellow-500 to-orange-600 px-5 py-2.5 rounded-xl font-bold text-sm w-full disabled:opacity-50 disabled:cursor-not-allowed">
+                            🎁 Получить карточки
+                        </button>
+
+                        <div id="cardDropResults" class="mt-4 hidden">
+                            <h5 class="font-bold mb-3 text-green-400">✨ Полученные карточки:</h5>
+                            <div id="droppedCardsGrid" class="space-y-2"></div>
+                        </div>
+
+                        <div class="mt-4 text-[11px] text-gray-400">
+                            📦 Все полученные детали автоматически отправляются на склад (вкладка «Склад»).
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('tabContent').innerHTML = html;
+            // re-render card UI into Home tab
+            updateCardUI();
+        }
+
         function getAvailableComponents(compType, maxTier) {
             const baseItems = COMPONENTS[compType]?.items || [];
             const customItems = (gameState.customComponents || []).filter(c => c.compType === compType);
-            return [...baseItems, ...customItems].filter(item => item.tier <= maxTier);
+            return [...baseItems, ...customItems]
+                .filter(item => Number(item.tier || 1) <= Number(maxTier || 1))
+                .sort((a, b) => {
+                    const ta = Number(a.tier || 1), tb = Number(b.tier || 1);
+                    if (ta !== tb) return ta - tb;
+                    const qa = Number(a.quality || 0), qb = Number(b.quality || 0);
+                    if (qa !== qb) return qa - qb;
+                    return String(a.name || '').localeCompare(String(b.name || ''), 'ru');
+                });
         }
 
         function getEffectiveProductionCapacity() {
@@ -2006,7 +4246,7 @@
             
             html += `</div>
                 <div class="mt-4 bg-gray-800/50 rounded-xl p-4">
-                    <p class="text-gray-400 text-sm">📊 Макс. Tier: ${getMaxTier()} | Исследуйте технологии для доступа к лучшим компонентам</p>
+                    <p class="text-gray-400 text-sm">📊 Макс. редкость: ${getTierName(getMaxTier())} | Исследуйте технологии для доступа к лучшим компонентам</p>
                 </div>
             `;
             
@@ -2057,13 +4297,15 @@
                             }
                             available.forEach(c => {
                                 const stock = stockMap[c.name] || 0;
+                                const isUnique = !!c.custom && !!c.internal && (c.source === 'card_exclusive' || c.source === 'achievement');
                                 optionItems.push({
-                                    label: `${c.name} (Q:${c.quality}) [${stock} шт]`,
+                                    label: `${c.name}${isUnique ? ' ✨' : ''} • ${getTierName(c.tier)} • Q:${c.quality} [${stock} шт]${isUnique ? ' • Уникальный' : ''}`,
                                     value: c.name,
                                     price: c.price,
                                     quality: c.quality,
                                     optional: false,
-                                    disabled: stock === 0
+                                    disabled: stock === 0,
+                                    unique: isUnique
                                 });
                             });
                             const firstSelectable = optionItems.find(opt => !opt.disabled) || optionItems[0];
@@ -2079,7 +4321,8 @@
                                     <div id="buildMenu_${escapeAttr(compType)}" class="build-select-menu hidden absolute left-0 right-0 mt-1 bg-gray-900 border border-gray-700 rounded-lg shadow-xl z-30">
                                         ${optionItems.map(item => {
                                             const disabledClass = item.disabled ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-700';
-                                            return `<button type="button" class="w-full text-left px-3 py-2 text-xs ${disabledClass}" ${item.disabled ? 'disabled' : ''}
+                                            const uniqueClass = item.unique ? 'border-l-2 border-amber-400/70 bg-amber-500/5' : '';
+                                            return `<button type="button" class="w-full text-left px-3 py-2 text-xs ${disabledClass} ${uniqueClass}" ${item.disabled ? 'disabled' : ''}
                                                 data-comp-type="${escapeAttr(compType)}"
                                                 data-value="${escapeAttr(item.value)}"
                                                 data-price="${item.price}"
@@ -2224,6 +4467,25 @@
             
             gameState.totalProduced += quantity;
             gameState.experience += quantity;
+
+            // Gradually increase market share with production (slow, model-based)
+            const modelFactor = Math.max(1, (gameState.totalProduced || 0) / 2500);
+            const repFactor = clamp((gameState.reputation || 0) / 100, 0.4, 1.2);
+            const awarenessFactor = clamp((gameState.brandAwareness || 0) / 100, 0.4, 1.2);
+            const gain = Math.min(0.18, (quantity / 60000) * (0.4 + repFactor * 0.3 + awarenessFactor * 0.3) * Math.min(2, modelFactor));
+            if (gain > 0) {
+                gameState.market.yourShare = clamp((gameState.market.yourShare || 1) + gain, 1, 25);
+                const comps = gameState.market?.competitors || [];
+                const rest = 100 - gameState.market.yourShare;
+                const totalStr = comps.reduce((a, c) => a + (Number(c.strength || 1)), 0) || 1;
+                comps.forEach(c => {
+                    c.share = Math.max(1, Math.round(rest * (Number(c.strength || 1) / totalStr)));
+                });
+                let sum = gameState.market.yourShare + comps.reduce((a, c) => a + c.share, 0);
+                const diff = 100 - sum;
+                if (diff !== 0 && comps[0]) comps[0].share = Math.max(1, comps[0].share + diff);
+            }
+
             checkLevelUp();
             closeModal();
             updateUI();
@@ -2277,7 +4539,8 @@
             Object.entries(COMPONENTS).forEach(([compType, compData]) => {
                 if (compData.category !== currentComponentCategory) return;
                 
-                const available = getAvailableComponents(compType, maxTier);
+                // Market ordering: only market components (no internal/card/factory parts)
+                const available = (COMPONENTS[compType]?.items || []).filter(item => item.tier <= maxTier);
                 if (available.length === 0) return;
                 
                 html += `
@@ -2285,9 +4548,9 @@
                         const initial = available[0];
                         const discount = getContractDiscount(compType);
                         const discountLabel = discount > 0 ? ` (-${Math.round(discount * 100)}%)` : '';
-                        const initialLabel = `${initial.name} (Q:${initial.quality}) - ${formatMoney(initial.price)}${discountLabel}`;
+                        const initialLabel = `${initial.name} • ${getTierName(initial.tier)} • Q:${initial.quality} — ${formatMoney(initial.price)}${discountLabel}`;
                         return `
-                    <div class="bg-gray-800/50 rounded-xl p-2 component-order-card" data-type="${compType}" data-selected-name="${escapeAttr(initial.name)}" data-selected-price="${initial.price}" data-selected-quality="${initial.quality}">
+                    <div class="bg-gray-800/50 rounded-xl p-2 component-order-card" data-type="${compType}" data-selected-name="${escapeAttr(initial.name)}" data-selected-price="${initial.price}" data-selected-quality="${initial.quality}" data-selected-tier="${initial.tier}">
                         <h4 class="font-bold mb-1.5 text-xs truncate">${compData.name}</h4>
                         <div class="relative comp-select-wrapper mb-1.5">
                             <button type="button" class="comp-select-btn w-full bg-gray-700 rounded-lg px-2 py-1 text-[10px] text-left flex items-center justify-between gap-2" onclick="toggleCompDropdown('${compType}')">
@@ -2298,14 +4561,15 @@
                                 ${available.map(c => {
                                     const d = getContractDiscount(compType);
                                     const dLabel = d > 0 ? ` (-${Math.round(d * 100)}%)` : '';
-                                    return `<button type="button" class="comp-option w-full text-left px-2 py-1 text-[10px] hover:bg-gray-700"
+                                    return `<button type="button" class="comp-option w-full text-left px-2 py-1 text-[10px] hover:bg-gray-700 whitespace-normal break-words"
                                         data-comp-type="${escapeAttr(compType)}"
                                         data-name="${escapeAttr(c.name)}"
                                         data-price="${c.price}"
                                         data-quality="${c.quality}"
+                                        data-tier="${c.tier}"
                                         data-discount="${d}"
                                         onclick="selectComponentFromEl(this)">
-                                        ${escapeHtml(c.name)} (Q:${c.quality}) - ${formatMoney(c.price)}${dLabel}
+                                        ${escapeHtml(c.name)} • ${escapeHtml(getTierName(c.tier))} • Q:${c.quality} — ${formatMoney(c.price)}${dLabel}
                                     </button>`;
                                 }).join('')}
                             </div>
@@ -2605,33 +4869,92 @@
             notify(`✅ Заказано ${qty.toLocaleString()}x ${name}`, 'success');
         }
 
+        function updateSellCompLine(i) {
+            const slider = document.getElementById(`sellCompQty_${i}`);
+            if (!slider) return;
+            const qty = Math.max(0, parseInt(slider.value || '0', 10) || 0);
+            const label = document.getElementById(`sellCompQtyLabel_${i}`);
+            if (label) label.textContent = qty.toLocaleString();
+            const unit = Math.max(0, parseInt(slider.dataset.unit || '0', 10) || 0);
+            const total = document.getElementById(`sellCompTotal_${i}`);
+            if (total) total.textContent = formatMoney(unit * qty);
+        }
+
         function sellComponent(compType, name) {
-            const key = `${compType}:${name}`;
-            const qty = gameState.inventory[key] || 0;
+            const qty = getInventoryQty(compType, name);
             if (qty <= 0) return;
             sellComponentQty(compType, name, qty);
         }
 
+        function sellCompFromEl(btn) {
+            const compType = btn?.dataset?.compType;
+            const name = btn?.dataset?.name;
+            const idx = parseInt(btn?.dataset?.idx || '0', 10) || 0;
+            const slider = document.getElementById(`sellCompQty_${idx}`);
+            const qty = slider ? (parseInt(slider.value || '0', 10) || 0) : 0;
+            sellComponentQty(compType, name, qty);
+        }
+
         function sellComponentQty(compType, name, qty) {
-            const key = `${compType}:${name}`;
-            const stock = gameState.inventory[key] || 0;
-            const toSell = Math.min(stock, Math.max(0, qty || 0));
+            // Use normalized inventory access to avoid quote/entity mismatches
+            const stock = getInventoryQty(compType, name);
+            const toSell = Math.min(stock, Math.max(0, Number(qty || 0)));
             if (toSell <= 0) return;
+
             const compData = COMPONENTS[compType];
-            const baseItem = compData?.items?.find(item => item.name === name);
-            const basePrice = baseItem?.price || 0;
-            const sellPrice = Math.max(1, Math.round(basePrice * 0.6));
-            const revenue = sellPrice * toSell;
-            const remaining = stock - toSell;
-            if (remaining <= 0) {
-                delete gameState.inventory[key];
-            } else {
-                gameState.inventory[key] = remaining;
+            const baseItem = compData?.items?.find(item => normalizeCompName(item.name) === normalizeCompName(name));
+            let basePrice = baseItem?.price;
+            if (basePrice == null) {
+                const custom = (gameState.customComponents || []).find(c => c.compType === compType && normalizeCompName(c.name) === normalizeCompName(name));
+                basePrice = custom?.price ?? 0;
             }
+
+            const sellPrice = Math.max(1, Math.round(Number(basePrice || 0) * 0.6));
+            const revenue = sellPrice * toSell;
+
+            // Consume using normalized keys
+            consumeInventory(compType, name, toSell);
+
             gameState.money += revenue;
             updateUI();
             renderWarehouse();
             notify(`♻️ Продано ${toSell.toLocaleString()}x ${name} за ${formatMoney(revenue)}`, 'success');
+        }
+
+        // Sell a received batch directly from the drop UI (uses card unit price, not market 60%)
+        function sellDroppedBatchFromEl(btn) {
+            const compType = btn?.dataset?.compType;
+            const name = btn?.dataset?.name;
+            const qty = parseInt(btn?.dataset?.qty || '0', 10) || 0;
+            const unit = parseInt(btn?.dataset?.unit || '0', 10) || 0;
+            sellDroppedBatch(compType, name, qty, unit, btn);
+        }
+
+        function sellDroppedBatch(compType, name, qty, unitPrice, btnEl = null) {
+            if (!compType || !name || qty <= 0) return;
+
+            const stock = getInventoryQty(compType, name);
+            const toSell = Math.min(stock, qty);
+            if (toSell <= 0) {
+                notify('Нечего продавать (партия уже использована или продана).', 'warning');
+                return;
+            }
+
+            // Sell for 70% of card unit price
+            const sellUnit = Math.max(1, Math.round(Number(unitPrice || 0) * 0.7));
+            const revenue = sellUnit * toSell;
+
+            consumeInventory(compType, name, toSell);
+            gameState.money += revenue;
+            updateUI();
+
+            if (btnEl) {
+                btnEl.disabled = true;
+                btnEl.classList.add('opacity-50', 'cursor-not-allowed');
+                btnEl.textContent = 'Продано';
+            }
+
+            notify(`💸 Продано: ${toSell.toLocaleString()}x ${name} = ${formatMoney(revenue)}`, 'success');
         }
 
         // ==================== FACTORY ====================
@@ -2835,7 +5158,7 @@
             nameEl.value = '';
             updateUI();
             renderFactory();
-            notify(`✅ Компонент "${name}" создан (Q:${quality}, Tier ${tier}) и добавлен на склад x${qty}`, 'success');
+            notify(`✅ Компонент "${name}" создан (Q:${quality}, ${getTierName(tier)}) и добавлен на склад x${qty}`, 'success');
         }
 
         // ==================== REPAIR ====================
@@ -3632,28 +5955,55 @@
             if (inventoryItems.length === 0) {
                 html += `<p class="text-gray-500 text-center py-4">Пусто</p>`;
             } else {
-                inventoryItems.forEach(([key, qty]) => {
-                    const [type, name] = key.split(':');
+                inventoryItems.forEach(([key, qty], i) => {
+                    const idx = i;
+                    const [type, rawName] = key.split(':');
+                    const name = rawName;
                     const compData = COMPONENTS[type];
-                    const baseItem = compData?.items?.find(item => item.name === name);
-                    const basePrice = baseItem?.price || 0;
-                    const sellPrice = Math.max(1, Math.round(basePrice * 0.6));
+
+                    const baseItem = compData?.items?.find(item => normalizeCompName(item.name) === normalizeCompName(name));
+                    const customRef = (gameState.customComponents || []).find(c => c.compType === type && normalizeCompName(c.name) === normalizeCompName(name));
+
+                    let basePrice = baseItem?.price;
+                    if (basePrice == null) basePrice = customRef?.price ?? 0;
+
+                    const tier = Number(baseItem?.tier ?? customRef?.tier ?? 1);
+                    const sellPrice = Math.max(1, Math.round(Number(basePrice || 0) * 0.6));
+
                     html += `
-                        <div class="bg-gray-700/50 rounded-lg p-2">
-                            <div class="flex items-start gap-2">
+                        <div class="bg-gray-700/50 rounded-lg p-2 overflow-hidden">
+                            <div class="flex items-start justify-between gap-2">
                                 <div class="min-w-0 flex-1">
-                                    <div class="text-xs truncate">${name}</div>
-                                    <div class="text-[10px] text-gray-400">${compData?.name || ''} • ${formatMoney(sellPrice)} за шт</div>
+                                    <div class="text-xs whitespace-normal break-words leading-snug">${escapeHtml(name)}</div>
+                                    <div class="text-[10px] text-gray-400">${escapeHtml(compData?.name || '')} • ${escapeHtml(getTierName(tier))} • ${formatMoney(sellPrice)} / шт</div>
                                 </div>
                                 <div class="text-blue-400 font-bold text-xs flex-shrink-0">${qty.toLocaleString()} шт</div>
                             </div>
-                            <div class="flex items-center gap-2 mt-2">
-                                <input type="range" id="sellCompQty_${escapeAttr(type)}_${escapeAttr(name)}" min="1" max="${qty}" value="${qty}"
-                                    class="flex-1" oninput="document.getElementById('sellCompQtyLabel_${escapeAttr(type)}_${escapeAttr(name)}').textContent=this.value">
-                                <span id="sellCompQtyLabel_${escapeAttr(type)}_${escapeAttr(name)}" class="text-blue-400 font-bold w-12 text-right">${qty}</span>
-                                <button onclick="sellComponentQty('${type}', '${escapeJs(name)}', parseInt(document.getElementById('sellCompQty_${escapeAttr(type)}_${escapeAttr(name)}').value))" class="btn-action bg-red-600 px-2 py-1 rounded-lg text-[10px] whitespace-nowrap">
-                                    Продать
-                                </button>
+
+                            <div class="mt-2 flex flex-wrap items-center gap-2">
+                                <input 
+                                    type="range" 
+                                    id="sellCompQty_${idx}" 
+                                    min="1" 
+                                    max="${qty}" 
+                                    value="${qty}"
+                                    data-unit="${sellPrice}"
+                                    class="flex-1 min-w-[160px]"
+                                    oninput="updateSellCompLine(${idx})">
+
+                                <div class="flex items-center gap-2 flex-shrink-0">
+                                    <span id="sellCompQtyLabel_${idx}" class="text-blue-300 font-bold text-xs w-14 text-right">${qty.toLocaleString()}</span>
+                                    <span class="text-gray-400 text-[10px]">=</span>
+                                    <span id="sellCompTotal_${idx}" class="text-yellow-300 font-bold text-xs">${formatMoney(sellPrice * qty)}</span>
+                                    <button 
+                                        data-comp-type="${escapeAttr(type)}"
+                                        data-name="${escapeAttr(name)}"
+                                        data-idx="${idx}"
+                                        onclick="sellCompFromEl(this)" 
+                                        class="btn-action bg-red-600 px-2 py-1 rounded-lg text-[10px] whitespace-nowrap">
+                                        Продать
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     `;
@@ -3667,19 +6017,33 @@
             `;
             
             document.getElementById('tabContent').innerHTML = html;
+            // Ensure totals are shown correctly right after render
+            try {
+                for (let i = 0; i < inventoryItems.length; i++) updateSellCompLine(i);
+            } catch (e) {}
         }
 
         // ==================== SETTINGS ====================
         function renderSettings() {
+            const isDark = !!gameState.darkTheme;
             let html = `
                 <h3 class="text-xl font-bold mb-4">⚙️ Настройки</h3>
                 <div class="grid md:grid-cols-2 gap-4">
                     <div class="bg-gray-800/50 rounded-xl p-4">
-                        <h4 class="font-bold mb-2">💰 Финансы</h4>
-                        <p class="text-sm text-gray-400 mb-3">Получите дополнительный капитал для ускорения старта.</p>
-                        <button onclick="grantMoney()" class="btn-action bg-green-600 px-4 py-2 rounded-lg w-full">
-                            ➕ Получить $100,000
-                        </button>
+                        <h4 class="font-bold mb-2">🎨 Тема</h4>
+                        <p class="text-sm text-gray-400 mb-3">Переключение оформления интерфейса.</p>
+                        <div class="flex items-center justify-between bg-gray-700/40 rounded-xl p-3">
+                            <div class="text-sm">
+                                <div class="font-bold">Тёмная тема</div>
+                                <div class="text-xs text-gray-400">По умолчанию включена</div>
+                            </div>
+                            <label class="inline-flex items-center gap-2 cursor-pointer select-none">
+                                <input type="checkbox" class="hidden" ${isDark ? 'checked' : ''} onchange="setDarkTheme(this.checked)">
+                                <span class="w-12 h-7 rounded-full bg-gray-600 relative">
+                                    <span class="absolute top-1 left-1 w-5 h-5 rounded-full bg-white transition-all" style="transform: translateX(${isDark ? '20px' : '0px'});"></span>
+                                </span>
+                            </label>
+                        </div>
                     </div>
                     <div class="bg-gray-800/50 rounded-xl p-4">
                         <h4 class="font-bold mb-2">🗑️ Прогресс</h4>
@@ -3689,16 +6053,32 @@
                         </button>
                     </div>
                 </div>
+                <div class="mt-3 text-center text-xs text-gray-500">
+                    Автор игры: <span class="font-bold">tr1xx</span>
+                </div>
             `;
 
             document.getElementById('tabContent').innerHTML = html;
         }
 
-        function grantMoney() {
-            gameState.money += 100000;
-            updateUI();
-            renderSettings();
-            notify('💰 Получено $100,000', 'success');
+        function setDarkTheme(isDark) {
+            gameState.darkTheme = !!isDark;
+            applyTheme();
+            saveGame();
+            // re-render settings if opened
+            const activeTab = document.querySelector('.tab-btn.bg-blue-600');
+            if (activeTab?.dataset.tab === 'settings') renderSettings();
+        }
+
+        function applyTheme() {
+            const body = document.body;
+            if (!gameState.darkTheme) {
+                body.classList.add('light-theme');
+                body.classList.remove('telegram-bg');
+            } else {
+                body.classList.remove('light-theme');
+                body.classList.add('telegram-bg');
+            }
         }
 
         function upgradeFactory() {
